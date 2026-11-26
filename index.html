@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0068B5">
+    <title>Lịch Trực Ca A1 / A123 (2026 – 2027)</title>
+    <style>
+        :root {
+            --primary: #0068B5;
+            --primary-dark: #004a82;
+            --bg: #F0F4F8;
+            --card-bg: #FFFFFF;
+            --text-main: #1E293B;
+            --text-sub: #64748B;
+            --border: #E2E8F0;
+            --green: #16A34A;
+            --red: #DC2626;
+            --amber: #D97706;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .header-card h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-card p {
+            font-size: 13px;
+            opacity: 0.92;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--primary-dark);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+
+        select {
+            width: 100%;
+            padding: 11px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #F8FAFC;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-full {
+            grid-column: span 2;
+            background: var(--green);
+            color: white;
+        }
+
+        button {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #E2E8F0;
+            color: var(--text-main);
+        }
+
+        .status-box {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .working {
+            background: #FEE2E2;
+            color: var(--red);
+        }
+
+        .off {
+            background: #DCFCE7;
+            color: var(--green);
+        }
+
+        .status-text {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .status-desc {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+
+        .cal-day-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            padding-bottom: 6px;
+        }
+
+        .cal-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #F8FAFC;
+            padding: 2px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .cal-cell.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .cal-cell.today {
+            border: 2px solid var(--primary);
+            font-weight: 700;
+        }
+
+        .cal-cell.work-day {
+            background: #FEE2E2;
+            color: #B91C1C;
+            font-weight: 700;
+        }
+
+        .cal-cell.work-night {
+            background: #FEF3C7;
+            color: #B45309;
+            font-weight: 700;
+        }
+
+        .cal-cell .tag {
+            font-size: 9px;
+            margin-top: 1px;
+            line-height: 1.1;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-sub);
+            text-align: center;
+        }
+
+        .legend-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-card">
+        <h1>LỊCH LÀM VIỆC CA A1</h1>
+        <p>Chuẩn Bảng Q4/2026 (đến 02/01/2027) & Lịch 2027</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">⚙️ Cấu Hình Ca Của Bạn</div>
+
+        <div class="form-group">
+            <label for="shiftCode">Mã Ca Cá Nhân</label>
+            <select id="shiftCode" onchange="saveAndRender()">
+                <option value="A1">Ca A1 (A1 + cụm A123)</option>
+                <option value="A2">Ca A2 (A2 + cụm A123)</option>
+                <option value="A3">Ca A3 (A3 + cụm A123)</option>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" onclick="jumpToToday()">🎯 Hôm Nay</button>
+            <button class="btn-secondary" onclick="exportICSYear(2027)">📅 Xuất Lịch 2027 (.ics)</button>
+            <button class="btn-full" onclick="exportICS90Days()">📥 Tải Lịch 90 Ngày Tới (.ics)</button>
+        </div>
+
+        <div class="status-box">
+            <div id="statusBadge" class="status-badge">...</div>
+            <div id="statusText" class="status-text">...</div>
+            <div id="statusDesc" class="status-desc">...</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="calendar-header">
+            <button class="btn-secondary" style="padding: 6px 12px;" onclick="changeMonth(-1)">◀</button>
+            <h3 id="monthTitle">...</h3>
+            <button class="btn-secondary" style="padding: 6px 12px;" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="calendar-grid" id="calGrid"></div>
+        <div class="legend">
+            <div class="legend-row">
+                <span><i class="dot" style="background:#FEE2E2;border:1px solid #DC2626"></i> Đi làm (Ngày)</span>
+                <span><i class="dot" style="background:#FEF3C7;border:1px solid #D97706"></i> Đi làm (Đêm)</span>
+            </div>
+            <div>Chạm vào bất kỳ ngày nào trên lịch để đổi nhanh trạng thái (Ngày / Đêm / Nghỉ)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let viewDate = new Date();
+
+    // Khóa cứng dữ liệu chính xác 100% từ bảng Q4/2026 đến hết WW 01'27 (02/01/2027):
+    // Mỗi ngày ghi rõ: { dayCode: mã ca hàng DAY, nightCode: mã ca hàng NIGHT, dayCluster: cụm DAY, nightCluster: cụm NIGHT }
+    const EXACT_TABLE_2026 = {
+        // WW 47 (15/11 - 21/11/2026)
+        "2026-11-15": { d: "A3", n: "B3", dc: "C123", nc: "D123" },
+        "2026-11-16": { d: "A1", n: "B1", dc: "C123", nc: "D123" },
+        "2026-11-17": { d: "A2", n: "B2", dc: "C123", nc: "D123" },
+        "2026-11-18": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-19": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-20": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-21": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+
+        // WW 48 (22/11 - 28/11/2026)
+        "2026-11-22": { d: "A3", n: "B3", dc: "C123", nc: "D123" },
+        "2026-11-23": { d: "A1", n: "B1", dc: "C123", nc: "D123" },
+        "2026-11-24": { d: "A2", n: "B2", dc: "C123", nc: "D123" },
+        "2026-11-25": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-26": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-27": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-11-28": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+
+        // WW 49 (29/11 - 05/12/2026)
+        "2026-11-29": { d: "A3", n: "B3", dc: "C123", nc: "D123" },
+        "2026-11-30": { d: "A1", n: "B1", dc: "C123", nc: "D123" },
+        "2026-12-01": { d: "A2", n: "B2", dc: "C123", nc: "D123" },
+        "2026-12-02": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-12-03": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-12-04": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+        "2026-12-05": { d: "AC4", n: "BD4", dc: "A123", nc: "B123" },
+
+        // WW 50 (06/12 - 12/12/2026)
+        "2026-12-06": { d: "A1", n: "B1", dc: "D123", nc: "C123" },
+        "2026-12-07": { d: "A2", n: "B2", dc: "D123", nc: "C123" },
+        "2026-12-08": { d: "B3", n: "A3", dc: "D123", nc: "C123" },
+        "2026-12-09": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-10": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-11": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-12": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+
+        // WW 51 (13/12 - 19/12/2026)
+        "2026-12-13": { d: "B2", n: "A2", dc: "D123", nc: "C123" },
+        "2026-12-14": { d: "B3", n: "A3", dc: "D123", nc: "C123" },
+        "2026-12-15": { d: "B1", n: "A1", dc: "D123", nc: "C123" },
+        "2026-12-16": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-17": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-18": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-19": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+
+        // WW 52 (20/12 - 26/12/2026)
+        "2026-12-20": { d: "B3", n: "A3", dc: "D123", nc: "C123" },
+        "2026-12-21": { d: "B1", n: "A1", dc: "D123", nc: "C123" },
+        "2026-12-22": { d: "B2", n: "A2", dc: "D123", nc: "C123" },
+        "2026-12-23": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-24": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-25": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-26": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+
+        // WW 01'27 (27/12/2026 - 02/01/2027) — Đúng như ảnh bạn vừa gửi:
+        // 27 (CN): NIGHT A1 | 28 (T2): NIGHT A3 | 29, 30, 31 (T3, T4, T5): NIGHT A123 (AC4) | 01, 02/01 (T6, T7): D123
+        "2026-12-27": { d: "B1", n: "A1", dc: "C123", nc: "D123" },
+        "2026-12-28": { d: "B3", n: "A3", dc: "C123", nc: "D123" },
+        "2026-12-29": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-30": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2026-12-31": { d: "BD4", n: "AC4", dc: "B123", nc: "A123" },
+        "2027-01-01": { d: "B2", n: "A2", dc: "C123", nc: "D123" },
+        "2027-01-02": { d: "BD4", n: "AC4", dc: "C123", nc: "D123" }
+    };
+
+    // Chu kỳ 6 tuần tiếp nối từ Chủ Nhật 03/01/2027 sang hết năm 2027
+    const ANCHOR_2027 = new Date(2027, 0, 3);
+    const CYCLE_2027 = [
+        { sunToTue: ["A3", "A1", "A2"], a123Type: "DAY" },
+        { sunToTue: ["A3", "A1", "A2"], a123Type: "DAY" },
+        { sunToTue: ["A3", "A1", "A2"], a123Type: "DAY" },
+        { sunToTue: ["A1", "A2", "A3"], a123Type: "NIGHT" },
+        { sunToTue: ["A2", "A3", "A1"], a123Type: "NIGHT" },
+        { sunToTue: ["A3", "A1", "A2"], a123Type: "NIGHT" }
+    ];
+
+    function toKey(date) {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    function getManualOverrides() {
+        try {
+            return JSON.parse(localStorage.getItem("lich_manual_overrides_v1") || "{}");
+        } catch (_) {
+            return {};
+        }
+    }
+
+    function toggleDayOverride(key) {
+        const ov = getManualOverrides();
+        const cur = ov[key]; // undefined -> DAY -> NIGHT -> OFF -> undefined
+        if (!cur) ov[key] = "DAY";
+        else if (cur === "DAY") ov[key] = "NIGHT";
+        else if (cur === "NIGHT") ov[key] = "OFF";
+        else delete ov[key];
+        localStorage.setItem("lich_manual_overrides_v1", JSON.stringify(ov));
+        updateTodayStatus();
+        renderCalendar();
+    }
+
+    function getDayStatus(date) {
+        const key = toKey(date);
+        const ov = getManualOverrides()[key];
+        if (ov === "DAY") return { work: true, type: "DAY", label: "A123*" };
+        if (ov === "NIGHT") return { work: true, type: "NIGHT", label: "Đêm*" };
+        if (ov === "OFF") return { work: false, type: null, label: "NGHỈ*" };
+
+        const code = document.getElementById("shiftCode").value; // A1, A2, A3
+        const dow = date.getDay(); // 0=CN, 1=T2, 2=T3, 3=T4, 4=T5, 5=T6, 6=T7
+
+        // 1. Tra cứu trực tiếp từ bảng Q4/2026 (15/11/2026 -> 02/01/2027)
+        const exact = EXACT_TABLE_2026[key];
+        if (exact) {
+            // Tuần đặc biệt 27/12/2026 - 02/01/2027: cụm A123 (NIGHT) chạy T3(29), T4(30), T5(31)
+            if (key >= "2026-12-27" && key <= "2027-01-02") {
+                if (exact.n === code) return { work: true, type: "NIGHT", label: `${code} Đêm` };
+                if (exact.nc === "A123" && (dow === 2 || dow === 3 || dow === 4)) {
+                    return { work: true, type: "NIGHT", label: "A123 Đêm" };
+                }
+                return { work: false, type: null, label: "NGHỈ" };
+            }
+
+            // Các tuần WW47 -> WW52 bình thường:
+            // CN, T2, T3: làm đúng 1 ngày trùng mã cá nhân
+            if (dow <= 2) {
+                if (exact.d === code) return { work: true, type: "DAY", label: code };
+                if (exact.n === code) return { work: true, type: "NIGHT", label: `${code} Đêm` };
+                return { work: false, type: null, label: "NGHỈ" };
+            }
+            // T4 (dow === 3): nghỉ chuyển ca
+            if (dow === 3) {
+                return { work: false, type: null, label: "NGHỈ" };
+            }
+            // T5, T6, T7 (dow === 4, 5, 6): làm cụm A123 (3 ngày)
+            if (exact.dc === "A123") return { work: true, type: "DAY", label: "A123" };
+            if (exact.nc === "A123") return { work: true, type: "NIGHT", label: "A123 Đêm" };
+            return { work: false, type: null, label: "NGHỈ" };
+        }
+
+        // 2. Tính tự động từ 03/01/2027 sang hết năm 2027
+        const cleanDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const diffDays = Math.floor((cleanDate - ANCHOR_2027) / 86400000);
+        const weekIndex = Math.floor(diffDays / 7);
+        const cycleIdx = ((weekIndex % CYCLE_2027.length) + CYCLE_2027.length) % CYCLE_2027.length;
+        const weekRule = CYCLE_2027[cycleIdx];
+
+        if (dow <= 2) {
+            const dayCode = weekRule.sunToTue[dow];
+            if (dayCode === code) {
+                return {
+                    work: true,
+                    type: weekRule.a123Type,
+                    label: weekRule.a123Type === "DAY" ? code : `${code} Đêm`
+                };
+            }
+            return { work: false, type: null, label: "NGHỈ" };
+        }
+        if (dow === 3) {
+            return { work: false, type: null, label: "NGHỈ" };
+        }
+        return {
+            work: true,
+            type: weekRule.a123Type,
+            label: weekRule.a123Type === "DAY" ? "A123" : "A123 Đêm"
+        };
+    }
+
+    function saveAndRender() {
+        localStorage.setItem("lich_a1_cfg_v6", document.getElementById("shiftCode").value);
+        updateTodayStatus();
+        renderCalendar();
+    }
+
+    function updateTodayStatus() {
+        const now = new Date();
+        const code = document.getElementById("shiftCode").value;
+        const st = getDayStatus(now);
+
+        const badge = document.getElementById("statusBadge");
+        const text = document.getElementById("statusText");
+        const desc = document.getElementById("statusDesc");
+        const dStr = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+
+        if (st.work) {
+            badge.className = "status-badge working";
+            badge.textContent = st.type === "NIGHT" ? "ĐI LÀM (CA ĐÊM)" : "ĐI LÀM";
+            text.style.color = st.type === "NIGHT" ? "#B45309" : "#DC2626";
+            text.textContent = `Ca ${code} • ${st.label}`;
+        } else {
+            badge.className = "status-badge off";
+            badge.textContent = "NGHỈ";
+            text.style.color = "#16A34A";
+            text.textContent = `Hôm nay nghỉ ca ${code}`;
+        }
+        desc.textContent = `Ngày ${dStr}`;
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById("calGrid");
+        grid.innerHTML = "";
+        const y = viewDate.getFullYear();
+        const m = viewDate.getMonth();
+
+        document.getElementById("monthTitle").textContent = `Tháng ${m + 1} / ${y}`;
+
+        ["CN", "T2", "T3", "T4", "T5", "T6", "T7"].forEach(d => {
+            const el = document.createElement("div");
+            el.className = "cal-day-name";
+            el.textContent = d;
+            grid.appendChild(el);
+        });
+
+        const firstDay = new Date(y, m, 1).getDay();
+        const totalDays = new Date(y, m + 1, 0).getDate();
+        const today = new Date();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div");
+            empty.className = "cal-cell empty";
+            grid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= totalDays; day++) {
+            const d = new Date(y, m, day);
+            const key = toKey(d);
+            const st = getDayStatus(d);
+            const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+
+            const cell = document.createElement("div");
+            let cls = "cal-cell";
+            if (st.work) cls += st.type === "NIGHT" ? " work-night" : " work-day";
+            if (isToday) cls += " today";
+            cell.className = cls;
+            cell.innerHTML = `<span>${day}</span><span class="tag">${st.label}</span>`;
+            cell.onclick = () => toggleDayOverride(key);
+            grid.appendChild(cell);
+        }
+    }
+
+    function changeMonth(delta) {
+        viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + delta, 1);
+        renderCalendar();
+    }
+
+    function jumpToToday() {
+        viewDate = new Date();
+        updateTodayStatus();
+        renderCalendar();
+    }
+
+    function fmtICS(date) {
+        return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    function downloadICS(startDate, endDate, filename) {
+        const code = document.getElementById("shiftCode").value;
+        let lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Lich Ca A1 2026-2027//VN",
+            "CALSCALE:GREGORIAN"
+        ];
+
+        let cur = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const last = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+        while (cur <= last) {
+            const st = getDayStatus(cur);
+            if (st.work) {
+                const next = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() + 1);
+                const s = fmtICS(cur);
+                const e = fmtICS(next);
+                lines.push(
+                    "BEGIN:VEVENT",
+                    `UID:${s}-${code}@lich-ca-a1`,
+                    `DTSTAMP:${s}T000000Z`,
+                    `DTSTART;VALUE=DATE:${s}`,
+                    `DTEND;VALUE=DATE:${e}`,
+                    `SUMMARY:Ca ${code} (${st.label})`,
+                    "END:VEVENT"
+                );
+            }
+            cur.setDate(cur.getDate() + 1);
+        }
+
+        lines.push("END:VCALENDAR");
+        const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function exportICS90Days() {
+        const now = new Date();
+        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 90);
+        downloadICS(now, end, "lich-ca-a1-90-ngay.ics");
+    }
+
+    function exportICSYear(year) {
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31);
+        downloadICS(start, end, `lich-ca-a1-${year}.ics`);
+    }
+
+    window.onload = function() {
+        const saved = localStorage.getItem("lich_a1_cfg_v6");
+        if (saved) document.getElementById("shiftCode").value = saved;
+        updateTodayStatus();
+        renderCalendar();
+    };
+</script>
+</body>
+</html>
