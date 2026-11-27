@@ -682,25 +682,48 @@ renderCalendars();
 loadRealtimeWeather();
 loadIntelStock();
 function getTodayShiftLabel(now) {
-  const pad2 = (n) => String(n).padStart(2, "0");
-  const d1 = `${pad2(now.getDate())}/${pad2(now.getMonth() + 1)}`;
-  const d2 = `${now.getDate()}/${now.getMonth() + 1}`;
-  const cells = Array.from(document.querySelectorAll("td, th, div, span"));
+  const dayNum = String(now.getDate()).padStart(2, "0");
+  const dayNumAlt = String(now.getDate());
+  const tables = Array.from(document.querySelectorAll("table"));
 
-  for (let i = 0; i < cells.length; i++) {
-    const txt = (cells[i].textContent || "").trim();
-    if (txt === d1 || txt === d2) {
-      const row = cells[i].closest("tr");
-      const rowText = row ? row.innerText : "";
-      const match = rowText.match(/\b(A123|B123|C123|D123|A1|D2|BD4|NGHỈ|OFF)\b/i);
-      if (match) return `Ca hôm nay: ${match[0].toUpperCase()}`;
-      break;
+  for (const table of tables) {
+    const rows = Array.from(table.rows || []);
+    let dateRow = null;
+    let colIndex = -1;
+
+    for (const r of rows) {
+      const cells = Array.from(r.cells || []);
+      const idx = cells.findIndex((c) => {
+        const t = (c.textContent || "").trim();
+        return t === dayNum || t === dayNumAlt;
+      });
+      if (idx !== -1) {
+        dateRow = r;
+        colIndex = idx;
+        break;
+      }
+    }
+
+    if (dateRow && colIndex !== -1) {
+      const myScheduleRow = rows.find((r) => /lịch bạn/i.test(r.innerText || ""));
+      if (myScheduleRow && myScheduleRow.cells[colIndex]) {
+        const val = (myScheduleRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
+        if (val) return `Ca hôm nay: ${val}`;
+      }
+
+      for (const r of rows) {
+        if (r === dateRow) continue;
+        const cellVal = (r.cells[colIndex]?.innerText || "").replace(/\s+/g, " ").trim();
+        const labelVal = (r.cells[0]?.innerText || "").replace(/\s+/g, " ").trim();
+        if (cellVal && !/^(t2|t3|t4|t5|t6|t7|cn)$/i.test(cellVal)) {
+          return labelVal ? `${labelVal}: ${cellVal}` : `Ca hôm nay: ${cellVal}`;
+        }
+      }
     }
   }
 
   return "Hôm nay: Chưa rõ ca";
 }
-
 function tickLiveClockAndShift() {
   const clockEl = document.getElementById("live-clock");
   const periodEl = document.getElementById("day-night-badge");
