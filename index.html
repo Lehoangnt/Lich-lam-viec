@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Ca Làm Việc Intel </title>
     <style>
-                       :root {
+        :root {
             --intel-blue: #0071c5;       /* Xanh đen than đậm — sắc nét, chuyên nghiệp */
             --intel-dark: #004a86;       /* Đen xanh sâu cho thanh tiêu đề/header */
 
@@ -156,11 +156,11 @@
     <p>🥰 Intel In My Heart</p>
     <div id="today-info" style="margin-top: 4px;"></div>
   </div>
-      <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
-        <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
-        <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
-      </div>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
+  <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+    <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
+    <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
     <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
       <div id="weather-temp" style="font-size: 16px; font-weight: 700; line-height: 1.2;">--°C</div>
       <div id="weather-desc" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
@@ -521,7 +521,7 @@
                 let nextDateStr = `${nextDateObj.getFullYear()}${String(nextDateObj.getMonth()+1).padStart(2,'0')}${String(nextDateObj.getDate()).padStart(2,'0')}`;
                 let wwStr = getWWLabel(dt);
 
-                               if (selectedKip === "MY_A1") {
+                if (selectedKip === "MY_A1") {
                     let mySt = getMyStatusForDate(dt, data, i);
                     if (mySt.status === "MAIN" || mySt.status === "SUB") {
                         const hasDay = mySt.label.includes("NGÀY") || mySt.label.includes("N+Đ");
@@ -585,154 +585,128 @@
         link.click();
         document.body.removeChild(link);
     }
-const getIntelWW = (d = new Date()) => {
-  const start = new Date(d.getFullYear(), 0, 1);
-  const diff = Math.floor((d - start) / 86400000) + start.getDay();
-  const ww = Math.ceil(diff / 7);
-  const dayNum = d.getDay() === 0 ? 7 : d.getDay();
-  return `WW${ww}.${dayNum}`;
-};
 
-async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HCM") {
-  const tempEl = document.getElementById("weather-temp");
-  const descEl = document.getElementById("weather-desc");
-  const locEl = document.getElementById("weather-loc");
-  if (!tempEl || !descEl) return;
-  if (locEl) locEl.textContent = label;
+    const getIntelWW = (d = new Date()) => {
+        const start = new Date(d.getFullYear(), 0, 1);
+        const diff = Math.floor((d - start) / 86400000) + start.getDay();
+        const ww = Math.ceil(diff / 7);
+        const dayNum = d.getDay() === 0 ? 7 : d.getDay();
+        return `WW${ww}.${dayNum}`;
+    };
 
-  const weatherText = {
-    0: "Quang đãng",
-    1: "Ít mây",
-    2: "Có mây",
-    3: "Nhiều mây",
-    45: "Sương mù",
-    48: "Sương mù",
-    51: "Mưa phùn nhẹ",
-    53: "Mưa phùn",
-    55: "Mưa phùn dày",
-    61: "Mưa nhẹ",
-    63: "Mưa vừa",
-    65: "Mưa to",
-    80: "Mưa rào nhẹ",
-    81: "Mưa rào",
-    82: "Mưa rào lớn",
-    95: "Có dông"
-  };
+    async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HCM") {
+        const tempEl = document.getElementById("weather-temp");
+        const descEl = document.getElementById("weather-desc");
+        const locEl = document.getElementById("weather-loc");
+        if (!tempEl || !descEl) return;
+        if (locEl) locEl.textContent = label;
 
-  try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FBangkok`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Weather fetch failed");
-    const data = await res.json();
-    const current = data.current || {};
-    const temp = Math.round(current.temperature_2m);
-    const code = current.weather_code;
+        const weatherText = {
+            0: "Quang đãng",
+            1: "Ít mây",
+            2: "Có mây",
+            3: "Nhiều mây",
+            45: "Sương mù",
+            48: "Sương mù",
+            51: "Mưa phùn nhẹ",
+            53: "Mưa phùn",
+            55: "Mưa phùn dày",
+            61: "Mưa nhẹ",
+            63: "Mưa vừa",
+            65: "Mưa to",
+            80: "Mưa rào nhẹ",
+            81: "Mưa rào",
+            82: "Mưa rào lớn",
+            95: "Có dông"
+        };
 
-    tempEl.textContent = Number.isFinite(temp) ? `${temp}°C` : "--°C";
-    descEl.textContent = weatherText[code] || `Mã ${code}`;
-  } catch (err) {
-    descEl.textContent = "Mất kết nối";
-  }
-}
-async function loadIntelStock() {
-  const priceEl = document.getElementById("stock-price");
-  const changeEl = document.getElementById("stock-change");
-  if (!priceEl || !changeEl) return;
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FBangkok`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Weather fetch failed");
+            const data = await res.json();
+            const current = data.current || {};
+            const temp = Math.round(current.temperature_2m);
+            const code = current.weather_code;
 
-  const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m";
-  const urls = [
-    yahooUrl,
-    "https://corsproxy.io/?" + encodeURIComponent(yahooUrl),
-    "https://api.allorigins.win/raw?url=" + encodeURIComponent(yahooUrl)
-  ];
-
-  for (const url of urls) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) continue;
-      const data = await res.json();
-      const meta = data?.chart?.result?.[0]?.meta;
-      if (!meta) continue;
-
-      const price = Number(meta.regularMarketPrice);
-      const prevClose = Number(meta.previousClose ?? meta.chartPreviousClose);
-      if (!Number.isFinite(price) || price <= 0) continue;
-
-      priceEl.textContent = `$${price.toFixed(2)}`;
-
-      if (Number.isFinite(prevClose) && prevClose > 0) {
-        const diff = price - prevClose;
-        const pct = (diff / prevClose) * 100;
-        const sign = diff >= 0 ? "+" : "";
-        changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
-        changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
-      } else {
-        changeEl.textContent = "Cập nhật";
-      }
-      return;
-    } catch (e) {}
-  }
-
-  changeEl.textContent = "Chưa lấy được";
-}
-const now = new Date();
-document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(now)}</b>`;
-renderCalendars();
-loadRealtimeWeather();
-loadIntelStock();
-function tickLiveClockAndPeriod() {
-  const clockEl = document.getElementById("live-clock");
-  const periodEl = document.getElementById("day-night-badge");
-  if (!clockEl || !periodEl) return;
-
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
-
-  clockEl.textContent = `🕒 ${hh}:${mm}:${ss}`;
-
-  const mins = now.getHours() * 60 + now.getMinutes();
-  const isDay = mins >= 6 * 60 && mins < 18 * 60;
-  periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
-  periodEl.style.background = isDay
-    ? "rgba(250, 204, 21, 0.25)"
-    : "rgba(99, 102, 241, 0.35)";
-}
-
-tickLiveClockAndPeriod();
-if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
-window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
+            tempEl.textContent = Number.isFinite(temp) ? `${temp}°C` : "--°C";
+            descEl.textContent = weatherText[code] || `Mã ${code}`;
+        } catch (err) {
+            descEl.textContent = "Mất kết nối";
         }
-      }
     }
-  } catch (e) {}
 
-  return mins >= 6 * 60 && mins < 18 * 60 ? "Ca ngày hôm nay: --" : "Ca đêm hôm nay: B123";
-}
-function tickLiveClockAndPeriod() {
-  const clockEl = document.getElementById("live-clock");
-  const periodEl = document.getElementById("day-night-badge");
-  if (!clockEl || !periodEl) return;
+    async function loadIntelStock() {
+        const priceEl = document.getElementById("stock-price");
+        const changeEl = document.getElementById("stock-change");
+        if (!priceEl || !changeEl) return;
 
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
+        const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m";
+        const urls = [
+            yahooUrl,
+            "https://corsproxy.io/?" + encodeURIComponent(yahooUrl),
+            "https://api.allorigins.win/raw?url=" + encodeURIComponent(yahooUrl)
+        ];
 
-  clockEl.textContent = "🕒 " + hh + ":" + mm + ":" + ss;
+        for (const url of urls) {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) continue;
+                const data = await res.json();
+                const meta = data?.chart?.result?.[0]?.meta;
+                if (!meta) continue;
 
-  const mins = now.getHours() * 60 + now.getMinutes();
-  const isDay = mins >= 6 * 60 && mins < 18 * 60;
-  periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
-  periodEl.style.background = isDay
-    ? "rgba(250, 204, 21, 0.25)"
-    : "rgba(99, 102, 241, 0.35)";
-}
+                const price = Number(meta.regularMarketPrice);
+                const prevClose = Number(meta.previousClose ?? meta.chartPreviousClose);
+                if (!Number.isFinite(price) || price <= 0) continue;
 
-tickLiveClockAndPeriod();
-if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
-window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);;
+                priceEl.textContent = `$${price.toFixed(2)}`;
+
+                if (Number.isFinite(prevClose) && prevClose > 0) {
+                    const diff = price - prevClose;
+                    const pct = (diff / prevClose) * 100;
+                    const sign = diff >= 0 ? "+" : "";
+                    changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
+                    changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
+                } else {
+                    changeEl.textContent = "Cập nhật";
+                }
+                return;
+            } catch (e) {}
+        }
+
+        changeEl.textContent = "Chưa lấy được";
+    }
+
+    const todayObj = new Date();
+    document.getElementById("today-info").innerHTML = `Hôm nay: <b>${todayObj.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(todayObj)}</b>`;
+    renderCalendars();
+    loadRealtimeWeather();
+    loadIntelStock();
+
+    function tickLiveClockAndPeriod() {
+        const clockEl = document.getElementById("live-clock");
+        const periodEl = document.getElementById("day-night-badge");
+        if (!clockEl || !periodEl) return;
+
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+
+        clockEl.textContent = "🕒 " + hh + ":" + mm + ":" + ss;
+
+        const mins = d.getHours() * 60 + d.getMinutes();
+        const isDay = mins >= 6 * 60 && mins < 18 * 60;
+        periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
+        periodEl.style.background = isDay
+            ? "rgba(250, 204, 21, 0.25)"
+            : "rgba(99, 102, 241, 0.35)";
+    }
+
+    tickLiveClockAndPeriod();
+    if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
+    window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
 </script>
 </body>
 </html>
