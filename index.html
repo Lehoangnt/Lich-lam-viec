@@ -687,11 +687,24 @@ function getTodayShiftLabel(now) {
     const isDay = mins >= 6 * 60 && mins < 18 * 60;
     const dayNum = String(now.getDate()).padStart(2, "0");
     const dayNumAlt = String(now.getDate());
-    const tables = Array.from(document.querySelectorAll("table"));
+    const curMonth = now.getMonth() + 1;
+    const curYear = now.getFullYear();
 
-    for (const table of tables) {
+    const monthSelect = document.querySelector('select[id*="month" i], select[name*="month" i]');
+    const yearSelect = document.querySelector('select[id*="year" i], select[name*="year" i]');
+    const selectedMonth = monthSelect ? parseInt(monthSelect.value, 10) : curMonth;
+    const selectedYear = yearSelect ? parseInt(yearSelect.value, 10) : curYear;
+
+    if (selectedMonth !== curMonth || selectedYear !== curYear) {
+      return isDay ? "Ca ngày hôm nay: --" : "Ca đêm hôm nay: --";
+    }
+
+    const visibleTables = Array.from(document.querySelectorAll("table")).filter(
+      (t) => t.offsetParent !== null
+    );
+
+    for (const table of visibleTables) {
       const rows = Array.from(table.rows || []);
-      let dateRow = null;
       let colIndex = -1;
 
       for (const r of rows) {
@@ -701,20 +714,34 @@ function getTodayShiftLabel(now) {
           return t === dayNum || t === dayNumAlt;
         });
         if (idx !== -1) {
-          dateRow = r;
           colIndex = idx;
           break;
         }
       }
 
-      if (dateRow && colIndex !== -1) {
-        const targetRowRegex = isDay ? /ca ngày/i : /ca đêm/i;
-        const shiftRow = rows.find((r) => targetRowRegex.test(r.innerText || ""));
-        if (shiftRow && shiftRow.cells[colIndex]) {
-          const val = (shiftRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
-          if (val) {
-            return isDay ? `Ca ngày hôm nay: ${val}` : `Ca đêm hôm nay: ${val}`;
-          }
+      if (colIndex === -1) continue;
+
+      const targetRowRegex = isDay ? /ca ngày/i : /ca đêm/i;
+      const shiftRow = rows.find((r) => targetRowRegex.test(r.innerText || ""));
+      if (shiftRow && shiftRow.cells[colIndex]) {
+        const val = (shiftRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
+        if (val) {
+          return isDay ? `Ca ngày hôm nay: ${val}` : `Ca đêm hôm nay: ${val}`;
+        }
+      }
+
+      const myScheduleRow = rows.find((r) => /lịch bạn/i.test(r.innerText || ""));
+      if (myScheduleRow && myScheduleRow.cells[colIndex]) {
+        const val = (myScheduleRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
+        if (val) return `Ca hôm nay: ${val}`;
+      }
+    }
+  } catch (e) {}
+
+  return now.getHours() * 60 + now.getMinutes() >= 6 * 60 && now.getHours() * 60 + now.getMinutes() < 18 * 60
+    ? "Ca ngày hôm nay: --"
+    : "Ca đêm hôm nay: --";
+}
         }
       }
     }
