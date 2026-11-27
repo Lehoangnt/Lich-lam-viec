@@ -568,7 +568,15 @@
         link.click();
         document.body.removeChild(link);
     }
-
+const getIntelWW = (d = new Date()) => {
+  const start = new Date(d.getFullYear(), 0, 1);
+  const diff = Math.floor((d - start) / 86400000) + start.getDay();
+  const ww = Math.ceil(diff / 7);
+  const dayNum = d.getDay() === 0 ? 7 : d.getDay(); // T2=1 ... CN=7
+  return `WW${ww}.${dayNum}`;
+};
+const now = new Date();
+document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(now)}</b>`;
     document.getElementById("today-info").innerHTML = `Hôm nay: <b>${new Date().toLocaleDateString('vi-VN')}</b>`;
     renderCalendars();
 </script>
