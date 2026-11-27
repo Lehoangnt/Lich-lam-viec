@@ -710,18 +710,17 @@ window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
 
   return mins >= 6 * 60 && mins < 18 * 60 ? "Ca ngày hôm nay: --" : "Ca đêm hôm nay: B123";
 }
-function tickLiveClockAndShift() {
+function tickLiveClockAndPeriod() {
   const clockEl = document.getElementById("live-clock");
   const periodEl = document.getElementById("day-night-badge");
-  const shiftEl = document.getElementById("today-shift-badge");
-  if (!clockEl || !periodEl || !shiftEl) return;
+  if (!clockEl || !periodEl) return;
 
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, "0");
   const mm = String(now.getMinutes()).padStart(2, "0");
   const ss = String(now.getSeconds()).padStart(2, "0");
 
-  clockEl.textContent = `🕒 ${hh}:${mm}:${ss}`;
+  clockEl.textContent = "🕒 " + hh + ":" + mm + ":" + ss;
 
   const mins = now.getHours() * 60 + now.getMinutes();
   const isDay = mins >= 6 * 60 && mins < 18 * 60;
@@ -729,12 +728,11 @@ function tickLiveClockAndShift() {
   periodEl.style.background = isDay
     ? "rgba(250, 204, 21, 0.25)"
     : "rgba(99, 102, 241, 0.35)";
-
-  shiftEl.textContent = getTodayShiftLabel(now);
 }
 
-tickLiveClockAndShift();
-setInterval(tickLiveClockAndShift, 1000);
+tickLiveClockAndPeriod();
+if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
+window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);;
 </script>
 </body>
 </html>
