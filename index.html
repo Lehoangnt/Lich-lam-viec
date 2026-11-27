@@ -577,7 +577,6 @@ const getIntelWW = (d = new Date()) => {
 };
 const now = new Date();
 document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(now)}</b>`;
-    document.getElementById("today-info").innerHTML = `Hôm nay: <b>${new Date().toLocaleDateString('vi-VN')}</b>`;
     renderCalendars();
 </script>
 
