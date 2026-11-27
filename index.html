@@ -156,7 +156,11 @@
     <p>🥰 Intel In My Heart</p>
     <div id="today-info" style="margin-top: 4px;"></div>
   </div>
-
+      <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+        <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
+        <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
+        <span id="today-shift-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">Đang lấy ca...</span>
+      </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
     <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
       <div id="weather-temp" style="font-size: 16px; font-weight: 700; line-height: 1.2;">--°C</div>
@@ -677,6 +681,51 @@ document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDa
 renderCalendars();
 loadRealtimeWeather();
 loadIntelStock();
+function getTodayShiftLabel(now) {
+  const pad2 = (n) => String(n).padStart(2, "0");
+  const d1 = `${pad2(now.getDate())}/${pad2(now.getMonth() + 1)}`;
+  const d2 = `${now.getDate()}/${now.getMonth() + 1}`;
+  const cells = Array.from(document.querySelectorAll("td, th, div, span"));
+
+  for (let i = 0; i < cells.length; i++) {
+    const txt = (cells[i].textContent || "").trim();
+    if (txt === d1 || txt === d2) {
+      const row = cells[i].closest("tr");
+      const rowText = row ? row.innerText : "";
+      const match = rowText.match(/\b(A123|B123|C123|D123|A1|D2|BD4|NGHỈ|OFF)\b/i);
+      if (match) return `Ca hôm nay: ${match[0].toUpperCase()}`;
+      break;
+    }
+  }
+
+  return "Hôm nay: Chưa rõ ca";
+}
+
+function tickLiveClockAndShift() {
+  const clockEl = document.getElementById("live-clock");
+  const periodEl = document.getElementById("day-night-badge");
+  const shiftEl = document.getElementById("today-shift-badge");
+  if (!clockEl || !periodEl || !shiftEl) return;
+
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+
+  clockEl.textContent = `🕒 ${hh}:${mm}:${ss}`;
+
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const isDay = mins >= 6 * 60 && mins < 18 * 60;
+  periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
+  periodEl.style.background = isDay
+    ? "rgba(250, 204, 21, 0.25)"
+    : "rgba(99, 102, 241, 0.35)";
+
+  shiftEl.textContent = getTodayShiftLabel(now);
+}
+
+tickLiveClockAndShift();
+setInterval(tickLiveClockAndShift, 1000);
 </script>
 </body>
 </html>
