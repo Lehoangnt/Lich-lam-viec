@@ -636,12 +636,14 @@ async function loadIntelStock() {
   const changeEl = document.getElementById("stock-change");
   if (!priceEl || !changeEl) return;
 
-  const endpoints = [
-    "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m",
-    "https://query2.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m"
+  const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m";
+  const urls = [
+    yahooUrl,
+    "https://corsproxy.io/?" + encodeURIComponent(yahooUrl),
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(yahooUrl)
   ];
 
-  for (const url of endpoints) {
+  for (const url of urls) {
     try {
       const res = await fetch(url);
       if (!res.ok) continue;
