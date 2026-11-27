@@ -150,12 +150,18 @@
 </head>
 <body>
 
-<div class="header-card">
-    <div class="header-title">
-        <h1> 🗓️Calenda Intel Việt Nam </h1>
-        <p>  😘 Intel In My Heart </p>
-    </div>
-    <div id="today-info" style="text-align: right; font-size: 14px;"></div>
+<div class="header-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+  <div class="header-title">
+    <h1>🗓️ Calenda Intel Việt Nam</h1>
+    <p>🥰 Intel In My Heart</p>
+    <div id="today-info" style="margin-top: 4px;"></div>
+  </div>
+
+  <div id="weather-box" style="text-align: right; flex-shrink: 0; background: rgba(255,255,255,0.14); padding: 8px 12px; border-radius: 10px; min-width: 96px;">
+    <div id="weather-temp" style="font-size: 18px; font-weight: 700; line-height: 1.2;">--°C</div>
+    <div id="weather-desc" style="font-size: 11.5px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
+    <div id="weather-loc" style="font-size: 10.5px; opacity: 0.78; margin-top: 1px;">TP.HCM</div>
+  </div>
 </div>
 
 <div class="controls">
@@ -572,13 +578,56 @@ const getIntelWW = (d = new Date()) => {
   const start = new Date(d.getFullYear(), 0, 1);
   const diff = Math.floor((d - start) / 86400000) + start.getDay();
   const ww = Math.ceil(diff / 7);
-  const dayNum = d.getDay() === 0 ? 7 : d.getDay(); // T2=1 ... CN=7
+  const dayNum = d.getDay() === 0 ? 7 : d.getDay();
   return `WW${ww}.${dayNum}`;
 };
+
+async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HCM") {
+  const tempEl = document.getElementById("weather-temp");
+  const descEl = document.getElementById("weather-desc");
+  const locEl = document.getElementById("weather-loc");
+  if (!tempEl || !descEl) return;
+  if (locEl) locEl.textContent = label;
+
+  const weatherText = {
+    0: "Quang đãng",
+    1: "Ít mây",
+    2: "Có mây",
+    3: "Nhiều mây",
+    45: "Sương mù",
+    48: "Sương mù",
+    51: "Mưa phùn nhẹ",
+    53: "Mưa phùn",
+    55: "Mưa phùn dày",
+    61: "Mưa nhẹ",
+    63: "Mưa vừa",
+    65: "Mưa to",
+    80: "Mưa rào nhẹ",
+    81: "Mưa rào",
+    82: "Mưa rào lớn",
+    95: "Có dông"
+  };
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FBangkok`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Weather fetch failed");
+    const data = await res.json();
+    const current = data.current || {};
+    const temp = Math.round(current.temperature_2m);
+    const code = current.weather_code;
+
+    tempEl.textContent = Number.isFinite(temp) ? `${temp}°C` : "--°C";
+    descEl.textContent = weatherText[code] || `Mã ${code}`;
+  } catch (err) {
+    descEl.textContent = "Mất kết nối";
+  }
+}
+
 const now = new Date();
 document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(now)}</b>`;
-    renderCalendars();
+renderCalendars();
+loadRealtimeWeather();
 </script>
-
 </body>
 </html>
