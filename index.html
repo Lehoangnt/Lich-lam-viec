@@ -682,47 +682,45 @@ renderCalendars();
 loadRealtimeWeather();
 loadIntelStock();
 function getTodayShiftLabel(now) {
-  const dayNum = String(now.getDate()).padStart(2, "0");
-  const dayNumAlt = String(now.getDate());
-  const tables = Array.from(document.querySelectorAll("table"));
+  try {
+    const mins = now.getHours() * 60 + now.getMinutes();
+    const isDay = mins >= 6 * 60 && mins < 18 * 60;
+    const dayNum = String(now.getDate()).padStart(2, "0");
+    const dayNumAlt = String(now.getDate());
+    const tables = Array.from(document.querySelectorAll("table"));
 
-  for (const table of tables) {
-    const rows = Array.from(table.rows || []);
-    let dateRow = null;
-    let colIndex = -1;
-
-    for (const r of rows) {
-      const cells = Array.from(r.cells || []);
-      const idx = cells.findIndex((c) => {
-        const t = (c.textContent || "").trim();
-        return t === dayNum || t === dayNumAlt;
-      });
-      if (idx !== -1) {
-        dateRow = r;
-        colIndex = idx;
-        break;
-      }
-    }
-
-    if (dateRow && colIndex !== -1) {
-      const myScheduleRow = rows.find((r) => /lịch bạn/i.test(r.innerText || ""));
-      if (myScheduleRow && myScheduleRow.cells[colIndex]) {
-        const val = (myScheduleRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
-        if (val) return `Ca hôm nay: ${val}`;
-      }
+    for (const table of tables) {
+      const rows = Array.from(table.rows || []);
+      let dateRow = null;
+      let colIndex = -1;
 
       for (const r of rows) {
-        if (r === dateRow) continue;
-        const cellVal = (r.cells[colIndex]?.innerText || "").replace(/\s+/g, " ").trim();
-        const labelVal = (r.cells[0]?.innerText || "").replace(/\s+/g, " ").trim();
-        if (cellVal && !/^(t2|t3|t4|t5|t6|t7|cn)$/i.test(cellVal)) {
-          return labelVal ? `${labelVal}: ${cellVal}` : `Ca hôm nay: ${cellVal}`;
+        const cells = Array.from(r.cells || []);
+        const idx = cells.findIndex((c) => {
+          const t = (c.textContent || "").trim();
+          return t === dayNum || t === dayNumAlt;
+        });
+        if (idx !== -1) {
+          dateRow = r;
+          colIndex = idx;
+          break;
+        }
+      }
+
+      if (dateRow && colIndex !== -1) {
+        const targetRowRegex = isDay ? /ca ngày/i : /ca đêm/i;
+        const shiftRow = rows.find((r) => targetRowRegex.test(r.innerText || ""));
+        if (shiftRow && shiftRow.cells[colIndex]) {
+          const val = (shiftRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
+          if (val) {
+            return isDay ? `Ca ngày hôm nay: ${val}` : `Ca đêm hôm nay: ${val}`;
+          }
         }
       }
     }
-  }
+  } catch (e) {}
 
-  return "Hôm nay: Chưa rõ ca";
+  return mins >= 6 * 60 && mins < 18 * 60 ? "Ca ngày hôm nay: --" : "Ca đêm hôm nay: B123";
 }
 function tickLiveClockAndShift() {
   const clockEl = document.getElementById("live-clock");
