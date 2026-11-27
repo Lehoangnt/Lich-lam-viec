@@ -159,7 +159,6 @@
       <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
         <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
         <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
-        <span id="today-shift-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">Đang lấy ca...</span>
       </div>
     <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
     <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
@@ -681,67 +680,29 @@ document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDa
 renderCalendars();
 loadRealtimeWeather();
 loadIntelStock();
-function getTodayShiftLabel(now) {
-  try {
-    const mins = now.getHours() * 60 + now.getMinutes();
-    const isDay = mins >= 6 * 60 && mins < 18 * 60;
-    const dayNum = String(now.getDate()).padStart(2, "0");
-    const dayNumAlt = String(now.getDate());
-    const curMonth = now.getMonth() + 1;
-    const curYear = now.getFullYear();
+function tickLiveClockAndPeriod() {
+  const clockEl = document.getElementById("live-clock");
+  const periodEl = document.getElementById("day-night-badge");
+  if (!clockEl || !periodEl) return;
 
-    const monthSelect = document.querySelector('select[id*="month" i], select[name*="month" i]');
-    const yearSelect = document.querySelector('select[id*="year" i], select[name*="year" i]');
-    const selectedMonth = monthSelect ? parseInt(monthSelect.value, 10) : curMonth;
-    const selectedYear = yearSelect ? parseInt(yearSelect.value, 10) : curYear;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
 
-    if (selectedMonth !== curMonth || selectedYear !== curYear) {
-      return isDay ? "Ca ngày hôm nay: --" : "Ca đêm hôm nay: --";
-    }
+  clockEl.textContent = `🕒 ${hh}:${mm}:${ss}`;
 
-    const visibleTables = Array.from(document.querySelectorAll("table")).filter(
-      (t) => t.offsetParent !== null
-    );
-
-    for (const table of visibleTables) {
-      const rows = Array.from(table.rows || []);
-      let colIndex = -1;
-
-      for (const r of rows) {
-        const cells = Array.from(r.cells || []);
-        const idx = cells.findIndex((c) => {
-          const t = (c.textContent || "").trim();
-          return t === dayNum || t === dayNumAlt;
-        });
-        if (idx !== -1) {
-          colIndex = idx;
-          break;
-        }
-      }
-
-      if (colIndex === -1) continue;
-
-      const targetRowRegex = isDay ? /ca ngày/i : /ca đêm/i;
-      const shiftRow = rows.find((r) => targetRowRegex.test(r.innerText || ""));
-      if (shiftRow && shiftRow.cells[colIndex]) {
-        const val = (shiftRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
-        if (val) {
-          return isDay ? `Ca ngày hôm nay: ${val}` : `Ca đêm hôm nay: ${val}`;
-        }
-      }
-
-      const myScheduleRow = rows.find((r) => /lịch bạn/i.test(r.innerText || ""));
-      if (myScheduleRow && myScheduleRow.cells[colIndex]) {
-        const val = (myScheduleRow.cells[colIndex].innerText || "").replace(/\s+/g, " ").trim();
-        if (val) return `Ca hôm nay: ${val}`;
-      }
-    }
-  } catch (e) {}
-
-  return now.getHours() * 60 + now.getMinutes() >= 6 * 60 && now.getHours() * 60 + now.getMinutes() < 18 * 60
-    ? "Ca ngày hôm nay: --"
-    : "Ca đêm hôm nay: --";
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const isDay = mins >= 6 * 60 && mins < 18 * 60;
+  periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
+  periodEl.style.background = isDay
+    ? "rgba(250, 204, 21, 0.25)"
+    : "rgba(99, 102, 241, 0.35)";
 }
+
+tickLiveClockAndPeriod();
+if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
+window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
         }
       }
     }
