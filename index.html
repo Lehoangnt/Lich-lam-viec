@@ -157,10 +157,18 @@
     <div id="today-info" style="margin-top: 4px;"></div>
   </div>
 
-  <div id="weather-box" style="text-align: right; flex-shrink: 0; background: rgba(255,255,255,0.14); padding: 8px 12px; border-radius: 10px; min-width: 96px;">
-    <div id="weather-temp" style="font-size: 18px; font-weight: 700; line-height: 1.2;">--°C</div>
-    <div id="weather-desc" style="font-size: 11.5px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
-    <div id="weather-loc" style="font-size: 10.5px; opacity: 0.78; margin-top: 1px;">TP.HCM</div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
+    <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
+      <div id="weather-temp" style="font-size: 16px; font-weight: 700; line-height: 1.2;">--°C</div>
+      <div id="weather-desc" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
+      <div id="weather-loc" style="font-size: 10px; opacity: 0.78; margin-top: 1px;">TP.HCM</div>
+    </div>
+
+    <div id="stock-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
+      <div id="stock-price" style="font-size: 16px; font-weight: 700; line-height: 1.2;">$--.--</div>
+      <div id="stock-change" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
+      <div style="font-size: 10px; opacity: 0.78; margin-top: 1px; font-weight: 600;">INTC</div>
+    </div>
   </div>
 </div>
 
@@ -623,11 +631,52 @@ async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HC
     descEl.textContent = "Mất kết nối";
   }
 }
+async function loadIntelStock() {
+  const priceEl = document.getElementById("stock-price");
+  const changeEl = document.getElementById("stock-change");
+  if (!priceEl || !changeEl) return;
 
+  const targetUrl = "https://stooq.com/q/l/?s=intc.us&f=sd2t2ohlcv&h&e=csv";
+  const proxies = [
+    targetUrl,
+    "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl)
+  ];
+
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const text = await res.text();
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) continue;
+
+      const cols = lines[1].split(",");
+      const openVal = parseFloat(cols[3]);
+      const closeVal = parseFloat(cols[6]);
+      if (!Number.isFinite(closeVal) || closeVal <= 0) continue;
+
+      priceEl.textContent = `$${closeVal.toFixed(2)}`;
+
+      if (Number.isFinite(openVal) && openVal > 0) {
+        const diff = closeVal - openVal;
+        const pct = (diff / openVal) * 100;
+        const sign = diff >= 0 ? "+" : "";
+        changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
+        changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
+      } else {
+        changeEl.textContent = cols[1] || "Cập nhật";
+      }
+      return;
+    } catch (e) {}
+  }
+
+  changeEl.textContent = "Chưa lấy được";
+}
 const now = new Date();
 document.getElementById("today-info").innerHTML = `Hôm nay: <b>${now.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(now)}</b>`;
 renderCalendars();
 loadRealtimeWeather();
+loadIntelStock();
 </script>
 </body>
 </html>
