@@ -636,35 +636,33 @@ async function loadIntelStock() {
   const changeEl = document.getElementById("stock-change");
   if (!priceEl || !changeEl) return;
 
-  const targetUrl = "https://stooq.com/q/l/?s=intc.us&f=sd2t2ohlcv&h&e=csv";
-  const proxies = [
-    targetUrl,
-    "https://api.allorigins.win/raw?url=" + encodeURIComponent(targetUrl)
+  const endpoints = [
+    "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m",
+    "https://query2.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m"
   ];
 
-  for (const url of proxies) {
+  for (const url of endpoints) {
     try {
       const res = await fetch(url);
       if (!res.ok) continue;
-      const text = await res.text();
-      const lines = text.trim().split(/\r?\n/);
-      if (lines.length < 2) continue;
+      const data = await res.json();
+      const meta = data?.chart?.result?.[0]?.meta;
+      if (!meta) continue;
 
-      const cols = lines[1].split(",");
-      const openVal = parseFloat(cols[3]);
-      const closeVal = parseFloat(cols[6]);
-      if (!Number.isFinite(closeVal) || closeVal <= 0) continue;
+      const price = Number(meta.regularMarketPrice);
+      const prevClose = Number(meta.previousClose ?? meta.chartPreviousClose);
+      if (!Number.isFinite(price) || price <= 0) continue;
 
-      priceEl.textContent = `$${closeVal.toFixed(2)}`;
+      priceEl.textContent = `$${price.toFixed(2)}`;
 
-      if (Number.isFinite(openVal) && openVal > 0) {
-        const diff = closeVal - openVal;
-        const pct = (diff / openVal) * 100;
+      if (Number.isFinite(prevClose) && prevClose > 0) {
+        const diff = price - prevClose;
+        const pct = (diff / prevClose) * 100;
         const sign = diff >= 0 ? "+" : "";
         changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
         changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
       } else {
-        changeEl.textContent = cols[1] || "Cập nhật";
+        changeEl.textContent = "Cập nhật";
       }
       return;
     } catch (e) {}
