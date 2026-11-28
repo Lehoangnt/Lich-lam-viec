@@ -254,7 +254,7 @@
         "05-01": { name: "Ngày Quốc tế Lao động (1/5)", short: "1/5", isOff: true },
         "07-27": { name: "Ngày Thương binh - Liệt sĩ (27/7)", short: "27/7", isOff: true },
         "09-02": { name: "Ngày Quốc khánh (2/9)", short: "Quốc khánh", isOff: true },
-        "11-24": { name: "Ngày Văn hóa Việt Nam (24/11)", short: "VH VN", isOff: true },
+        "11-24": { name: "Ngày Văn hóa Việt Nam (24/11)", short: "Văn Hóa", isOff: true },
         "12-25": { name: "Giáng sinh", short: "Giáng sinh", isOff: false }
     };
 
@@ -458,12 +458,12 @@
             const hasMainDay = dc === "A123";
             const hasMainNight = nc === "A123";
 
-            if (hasMainDay && hasMainNight) return { status: "MAIN", label: "LÀM A123 (N+Đ)" };
-            if (hasMainDay) return { status: "MAIN", label: "LÀM A123 (NGÀY)" };
-            if (hasMainNight) return { status: "MAIN", label: "LÀM A123 (ĐÊM)" };
-            if (hasA1Day && hasA1Night) return { status: "SUB", label: "LÀM A1 (N+Đ)" };
-            if (hasA1Day) return { status: "SUB", label: "LÀM A1 (NGÀY)" };
-            if (hasA1Night) return { status: "SUB", label: "LÀM A1 (ĐÊM)" };
+            if (hasMainDay && hasMainNight) return { status: "MAIN", label: "MAINTEAM (N+Đ)" };
+            if (hasMainDay) return { status: "MAIN", label: "MAINTEAM (NGÀY)" };
+            if (hasMainNight) return { status: "MAIN", label: "MAINTEAM (ĐÊM)" };
+            if (hasA1Day && hasA1Night) return { status: "SUB", label: "SUBTEAM (N+Đ)" };
+            if (hasA1Day) return { status: "SUB", label: "SUBTEAM (NGÀY)" };
+            if (hasA1Night) return { status: "SUB", label: "SUBTEAM (ĐÊM)" };
             return { status: "OFF", label: "NGHỈ" };
         }
 
