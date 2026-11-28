@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch Ca Làm Việc Intel</title>
+    <title>Lịch Ca Làm Việc Intel </title>
     <style>
         :root {
             --intel-blue: #0071c5;
             --intel-dark: #004a86;
+
             --kip-a: #e6f4ea;
             --kip-b: #fef7e0;
             --kip-c: #fce8e6;
             --kip-d: #e8f0fe;
+
             --work-main: #1d4ed8;
             --work-main-text: #ffffff;
+
             --work-sub: #d97706;
             --work-sub-text: #ffffff;
+
             --work-off: #15803d;
             --work-off-text: #ffffff;
+
             --holiday-bg: #fff1f2;
             --holiday-text: #be123c;
             --holiday-border: #fda4af;
@@ -50,7 +55,7 @@
             opacity: 0.9;
             font-size: 14px;
         }
-        .controls, .quick-search-box {
+        .controls {
             background: white;
             padding: 15px;
             border-radius: 12px;
@@ -60,9 +65,6 @@
             flex-wrap: wrap;
             gap: 15px;
             align-items: center;
-        }
-        .quick-search-box {
-            border-left: 5px solid var(--intel-blue);
         }
         .control-group {
             display: flex;
@@ -126,23 +128,11 @@
             z-index: 1;
             font-weight: bold;
         }
-        .ww-row {
-            background-color: #e9ecef;
-            font-weight: bold;
-            font-size: 11px;
-        }
-        .dow-row {
-            background-color: #f1f3f5;
-            font-weight: bold;
-        }
-        .sun {
-            color: #d9534f;
-        }
-        .date-row {
-            font-weight: bold;
-            font-size: 14px;
-            background-color: #fff;
-        }
+        .ww-row { background-color: #e9ecef; font-weight: bold; font-size: 11px; }
+        .dow-row { background-color: #f1f3f5; font-weight: bold; }
+        .sun { color: #d9534f; }
+        .date-row { font-weight: bold; font-size: 14px; background-color: #fff; }
+
         .holiday-row td {
             background-color: #fffafa;
             font-size: 11px;
@@ -154,606 +144,659 @@
             font-weight: 700;
             border-bottom: 2px solid var(--holiday-border);
         }
+
         .cell-A { background-color: var(--kip-a); font-weight: bold; }
         .cell-B { background-color: var(--kip-b); font-weight: bold; }
         .cell-C { background-color: var(--kip-c); font-weight: bold; }
         .cell-D { background-color: var(--kip-d); font-weight: bold; }
         .cell-AC { background-color: #f8cbad; }
         .cell-BD { background-color: #ffe699; }
+
         .st-main { background-color: var(--work-main); color: var(--work-main-text); font-weight: bold; }
         .st-sub { background-color: var(--work-sub); color: var(--work-sub-text); font-weight: bold; }
         .st-off { background-color: var(--work-off); color: var(--work-off-text); font-weight: bold; }
-        .highlight-selected { outline: 2px solid #d9534f; outline-offset: -2px; }
 
-        /* CSS Tra cứu nhanh */
-        .search-result {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            flex-grow: 1;
-            padding: 8px 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-        }
-        .search-badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            color: white;
-            font-size: 12px;
+        .highlight-selected {
+            outline: 2px solid #d9534f;
+            outline-offset: -2px;
         }
     </style>
 </head>
 <body>
-    <div class="header-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-        <div class="header-title">
-            <h1>🗓️ Calendar Intel Việt Nam</h1>
-            <p>🥰 Intel In My Heart</p>
-            <div id="today-info" style="margin-top: 4px;"></div>
-        </div>
-        <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
-            <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
-            <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
-            <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
-                <div id="weather-temp" style="font-size: 16px; font-weight: 700; line-height: 1.2;">--°C</div>
-                <div id="weather-desc" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
-                <div id="weather-loc" style="font-size: 10px; opacity: 0.78; margin-top: 1px;">TP.HCM</div>
-            </div>
-            <div id="stock-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
-                <div id="stock-price" style="font-size: 16px; font-weight: 700; line-height: 1.2;">$--.--</div>
-                <div id="stock-change" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
-                <div style="font-size: 10px; opacity: 0.78; margin-top: 1px; font-weight: 600;">INTC</div>
-            </div>
-        </div>
+
+<div class="header-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+  <div class="header-title">
+    <h1>🗓️ Calendar Intel Việt Nam</h1>
+    <p>🥰 Intel In My Heart</p>
+    <div id="today-info" style="margin-top: 4px;"></div>
+  </div>
+  <div id="today-live-bar" style="margin-top: 6px; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;">
+    <span id="live-clock" style="font-weight: 700; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--:--:--</span>
+    <span id="day-night-badge" style="font-weight: 600; background: rgba(255,255,255,0.16); padding: 2px 8px; border-radius: 999px;">--</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0;">
+    <div id="weather-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
+      <div id="weather-temp" style="font-size: 16px; font-weight: 700; line-height: 1.2;">--°C</div>
+      <div id="weather-desc" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
+      <div id="weather-loc" style="font-size: 10px; opacity: 0.78; margin-top: 1px;">TP.HCM</div>
     </div>
 
-    <!-- KHU VỰC ĐIỀU KHIỂN CHÍNH -->
-    <div class="controls">
-        <div class="control-group">
-            <label>Tháng:</label>
-            <select id="select-month" onchange="handleControlChange()">
-                <option value="1">Tháng 1</option>
-                <option value="2">Tháng 2</option>
-                <option value="3">Tháng 3</option>
-                <option value="4">Tháng 4</option>
-                <option value="5">Tháng 5</option>
-                <option value="6">Tháng 6</option>
-                <option value="7">Tháng 7</option>
-                <option value="8">Tháng 8</option>
-                <option value="9">Tháng 9</option>
-                <option value="10">Tháng 10</option>
-                <option value="11">Tháng 11</option>
-                <option value="12">Tháng 12</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label>Năm:</label>
-            <select id="select-year" onchange="handleControlChange()">
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label>Chế độ ca / xuất iOS:</label>
-            <select id="select-kip" onchange="handleControlChange()">
-                <option value="MY_A1">Lịch của tôi (A1 + A123)</option>
-                <option value="ALL_SHIFTS">Tất cả các ca (Ngày + Đêm)</option>
-                <option value="A123">Kíp Chính: A123</option>
-                <option value="B123">Kíp Chính: B123</option>
-                <option value="C123">Kíp Chính: C123</option>
-                <option value="D123">Kíp Chính: D123</option>
-                <option value="A1">Subteam: A1</option>
-                <option value="A2">Subteam: A2</option>
-                <option value="A3">Subteam: A3</option>
-                <option value="AC4">Subteam: AC4</option>
-                <option value="BD4">Subteam: BD4</option>
-            </select>
-        </div>
-        <button class="btn-ios" onclick="exportToICS()"> 📅 Tải Lịch (.ics) + Báo Thức ⏰ </button>
+    <div id="stock-box" style="display: flex; flex-direction: column; justify-content: space-between; text-align: right; background: rgba(255,255,255,0.14); padding: 7px 10px; border-radius: 10px; min-width: 92px;">
+      <div id="stock-price" style="font-size: 16px; font-weight: 700; line-height: 1.2;">$--.--</div>
+      <div id="stock-change" style="font-size: 11px; opacity: 0.92; margin-top: 2px;">Đang tải...</div>
+      <div style="font-size: 10px; opacity: 0.78; margin-top: 1px; font-weight: 600;">INTC</div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+    <div class="control-group">
+        <label>Tháng:</label>
+        <select id="select-month" onchange="renderCalendars()">
+            <option value="1">Tháng 1</option>
+            <option value="2">Tháng 2</option>
+            <option value="3">Tháng 3</option>
+            <option value="4">Tháng 4</option>
+            <option value="5">Tháng 5</option>
+            <option value="6">Tháng 6</option>
+            <option value="7">Tháng 7</option>
+            <option value="8">Tháng 8</option>
+            <option value="9">Tháng 9</option>
+            <option value="10">Tháng 10</option>
+            <option value="11" selected>Tháng 11</option>
+            <option value="12">Tháng 12</option>
+        </select>
     </div>
 
-    <!-- BỘ TRA CỨU NHANH BẤT KỲ NGÀY NÀO (NEW 🔍) -->
-    <div class="quick-search-box">
-        <div class="control-group">
-            <label>🔍 Tra cứu ngày bất kỳ:</label>
-            <input type="date" id="search-date" onchange="queryDateSchedule()" min="2026-10-01" max="2027-12-31">
-        </div>
-        <div class="search-result" id="search-result-display">
-            Vui lòng chọn một ngày để tra cứu nhanh thông tin ca trực...
-        </div>
+    <div class="control-group">
+        <label>Năm:</label>
+        <select id="select-year" onchange="renderCalendars()">
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+        </select>
     </div>
 
-    <div id="calendars-wrapper"></div>
+    <div class="control-group">
+        <label>Chế độ ca / xuất iOS:</label>
+        <select id="select-kip" onchange="renderCalendars()">
+            <option value="MY_A1" selected>Lịch của tôi (A1 + A123)</option>
+            <option value="ALL_SHIFTS">Tất cả các ca (Ngày + Đêm)</option>
+            <option value="A123">Kíp Chính: A123</option>
+            <option value="B123">Kíp Chính: B123</option>
+            <option value="C123">Kíp Chính: C123</option>
+            <option value="D123">Kíp Chính: D123</option>
+            <option value="A1">Subteam: A1</option>
+            <option value="A2">Subteam: A2</option>
+            <option value="A3">Subteam: A3</option>
+            <option value="AC4">Subteam: AC4</option>
+            <option value="BD4">Subteam: BD4</option>
+        </select>
+    </div>
 
-    <script>
-        const BASE_SUN_2026 = new Date(2026, 10, 1); // 01/11/2026 (CN) = 45.0
-        const BASE_WW_2026 = 45;
-        const BASE_SUN_2027 = new Date(2026, 11, 27); // 27/12/2026 (CN) = 1.0
-        const BASE_WW_2027 = 1;
+    <button class="btn-ios" onclick="exportToICS()">
+        📅 Tải Lịch (.ics) cho iPhone
+    </button>
+</div>
 
-        const FIXED_SOLAR_HOLIDAYS = {
-            "01-01": { name: "Tết Dương lịch", short: "Tết Tây", isOff: true },
-            "04-30": { name: "Ngày Giải phóng miền Nam (30/4)", short: "30/4", isOff: true },
-            "05-01": { name: "Ngày Quốc tế Lao động (1/5)", short: "1/5", isOff: true },
-            "07-27": { name: "Ngày Thương binh - Liệt sĩ (27/7)", short: "27/7", isOff: true },
-            "09-02": { name: "Ngày Quốc khánh (2/9)", short: "Quốc khánh", isOff: true },
-            "11-24": { name: "Ngày Văn hóa Việt Nam (24/11)", short: "VH VN", isOff: true },
-            "12-25": { name: "Giáng sinh", short: "Giáng sinh", isOff: false }
-        };
+<div id="calendars-wrapper"></div>
 
-        const SPECIFIC_HOLIDAYS = {
-            "2027-01-02": { name: "Nghỉ Tết Dương lịch (2/1)", short: "Nghỉ Tết", isOff: true },
-            "2027-01-03": { name: "Nghỉ Tết Dương lịch (3/1)", short: "Nghỉ Tết", isOff: true },
-            "2027-02-04": { name: "28 Tết (Nghỉ Tết Nguyên đán)", short: "28 Tết", isOff: true },
-            "2027-02-05": { name: "29 Tết / Giao thừa", short: "29 Tết", isOff: true },
-            "2027-02-06": { name: "Mùng 1 Tết Đinh Mùi", short: "Mùng 1", isOff: true },
-            "2027-02-07": { name: "Mùng 2 Tết Đinh Mùi", short: "Mùng 2", isOff: true },
-            "2027-02-08": { name: "Mùng 3 Tết Đinh Mùi", short: "Mùng 3", isOff: true },
-            "2027-02-09": { name: "Mùng 4 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 4", isOff: true },
-            "2027-02-10": { name: "Mùng 5 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 5", isOff: true },
-            "2027-04-16": { name: "Giỗ Tổ Hùng Vương (10/3 ÂL)", short: "Giỗ Tổ", isOff: true },
-            "2027-05-03": { name: "Nghỉ bù lễ 30/4 - 1/5", short: "Nghỉ lễ", isOff: true },
-            "2027-09-03": { name: "Nghỉ lễ Quốc khánh (3/9)", short: "Nghỉ lễ", isOff: true }
-        };
+<script>
+    const BASE_SUN_2026 = new Date(2026, 10, 1); // 01/11/2026 (CN) = 45.0
+    const BASE_WW_2026 = 45;
 
-        const FIXED_USER_DAYS = {
-            "2026-11-29": { status: "OFF", label: "NGHỈ" },
-            "2027-01-01": { status: "OFF", label: "NGHỈ" },
-            "2027-01-02": { status: "OFF", label: "NGHỈ" },
-            "2027-01-07": { status: "OFF", label: "NGHỈ" },
-            "2027-01-08": { status: "OFF", label: "NGHỈ" },
-            "2027-01-09": { status: "OFF", label: "NGHỈ" }
-        };
+    const BASE_SUN_2027 = new Date(2026, 11, 27); // 27/12/2026 (CN) = 1.0
+    const BASE_WW_2027 = 1;
 
-        // [Giữ nguyên cơ sở dữ liệu MONTHS_DB khổng lồ từ code gốc của bạn tại đây để tránh sai lệch dữ liệu lịch]
-        const MONTHS_DB = { "2026-10": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["D123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123"], dayHT: ["BD4","D2","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4","BD4"], nightC: ["C123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","A123","A123","C123","C123","C123"], nightHT: ["AC4","C2","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4","AC4"] }, "2026-11": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], dayC: ["D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123"], dayHT: ["B2","B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1"], nightC: ["C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123"], nightHT: ["A2","A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1"] }, "2026-12": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123","B123"], dayHT: ["A2","AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B1","B3","BD4","BD4","BD4"], nightC: ["D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123","A123"], nightHT: ["B2","BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A1","A3","AC4","AC4","AC4"] }, "2027-01": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123"], dayHT: ["B2","BD4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C2","C3","D1","BD4","BD4","BD4","BD4","D2"], nightC: ["D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123"], nightHT: ["A2","AC4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D2","D3","C1","AC4","AC4","AC4","AC4","C2"] }, "2027-02": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28], dayC: ["B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123"], dayHT: ["D3","D1","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","C2","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C3"], nightC: ["A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123"], nightHT: ["C3","C1","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","D2","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D3"] }, "2027-03": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","D123","D123"], dayHT: ["C1","C2","AC4","AC4","AC4","AC4","C1","C2","D3","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D1","D2","BD4","BD4"], nightC: ["B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","C123","C123"], nightHT: ["D1","D2","BD4","BD4","BD4","BD4","D1","D2","C3","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C1","C2","AC4","AC4"] }, "2027-04": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], dayC: ["D123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123"], dayHT: ["BD4","D3","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4"], nightC: ["C123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123"], nightHT: ["AC4","C3","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4"] }, "2027-05": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123"], dayHT: ["BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1"], nightC: ["A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123"], nightHT: ["AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1"] }, "2027-06": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], dayC: ["C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123"], dayHT: ["A2","AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B2","B1","AC4","AC4"], nightC: ["D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123"], nightHT: ["B2","BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A2","A1","BD4","BD4"] }, "2027-07": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["B123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123"], dayHT: ["AC4","B3","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C2","C3","D1","BD4","BD4","BD4","BD4"], nightC: ["A123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123"], nightHT: ["BD4","A3","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D2","D3","C1","AC4","AC4","AC4","AC4"] }, "2027-08": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123"], dayHT: ["D2","D3","D1","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","C2","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C3","C1","C2"], nightC: ["A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123"], nightHT: ["C2","C3","C1","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","D2","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D3","D1","D2"] }, "2027-09": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], dayC: ["A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","D123","D123","D123"], dayHT: ["AC4","AC4","AC4","AC4","C1","C2","D3","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D1","D3","BD4","BD4","BD4"], nightC: ["B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","C123","C123","C123"], nightHT: ["BD4","BD4","BD4","BD4","D1","D2","C3","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C1","C3","AC4","AC4","AC4"] }, "2027-10": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123"], dayHT: ["D2","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4","BD4","B2"], nightC: ["B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123"], nightHT: ["C2","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4","AC4","A2"] }, "2027-11": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], dayC: ["D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123"], dayHT: ["B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1","A2"], nightC: ["C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123"], nightHT: ["A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1","B2"] }, "2027-12": { dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], dayC: ["C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123","B123","C123"], dayHT: ["AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B1","B3","AC4","AC4","AC4","B2"], nightC: ["D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123","A123","D123"], nightHT: ["BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A1","A3","BD4","BD4","BD4","A2"] } };
+    // Lễ cố định theo MM-DD (Tết Tây, lễ/tết VN theo quy định + Giáng sinh)
+    const FIXED_SOLAR_HOLIDAYS = {
+        "01-01": { name: "Tết Dương lịch", short: "Tết Tây", isOff: true },
+        "04-30": { name: "Ngày Giải phóng miền Nam (30/4)", short: "30/4", isOff: true },
+        "05-01": { name: "Ngày Quốc tế Lao động (1/5)", short: "1/5", isOff: true },
+        "07-27": { name: "Ngày Thương binh - Liệt sĩ (27/7)", short: "27/7", isOff: true },
+        "09-02": { name: "Ngày Quốc khánh (2/9)", short: "Quốc khánh", isOff: true },
+        "11-24": { name: "Ngày Văn hóa Việt Nam (24/11)", short: "VH VN", isOff: true },
+        "12-25": { name: "Giáng sinh", short: "Giáng sinh", isOff: false }
+    };
 
-        function getRealDowVN(dateObj) {
-            const map = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-            return map[dateObj.getDay()];
+    // Lễ theo ngày cụ thể YYYY-MM-DD (Tết Nguyên Đán, Giỗ Tổ Hùng Vương, nghỉ lễ/nghỉ bù)
+    const SPECIFIC_HOLIDAYS = {
+        // Tết Dương lịch & nghỉ cuối tuần liền kề 2027
+        "2027-01-02": { name: "Nghỉ Tết Dương lịch (2/1)", short: "Nghỉ Tết", isOff: true },
+        "2027-01-03": { name: "Nghỉ Tết Dương lịch (3/1)", short: "Nghỉ Tết", isOff: true },
+
+        // Tết Nguyên Đán Đinh Mùi 2027 (28 Chạp Bính Ngọ -> Mùng 5 Đinh Mùi: 04/02 - 10/02/2027)
+        "2027-02-04": { name: "28 Tết (Nghỉ Tết Nguyên đán)", short: "28 Tết", isOff: true },
+        "2027-02-05": { name: "29 Tết / Giao thừa", short: "29 Tết", isOff: true },
+        "2027-02-06": { name: "Mùng 1 Tết Đinh Mùi", short: "Mùng 1", isOff: true },
+        "2027-02-07": { name: "Mùng 2 Tết Đinh Mùi", short: "Mùng 2", isOff: true },
+        "2027-02-08": { name: "Mùng 3 Tết Đinh Mùi", short: "Mùng 3", isOff: true },
+        "2027-02-09": { name: "Mùng 4 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 4", isOff: true },
+        "2027-02-10": { name: "Mùng 5 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 5", isOff: true },
+
+        // Giỗ Tổ Hùng Vương 2027 (10/3 Âm lịch = 16/04/2027)
+        "2027-04-16": { name: "Giỗ Tổ Hùng Vương (10/3 ÂL)", short: "Giỗ Tổ", isOff: true },
+
+        // Nghỉ lễ 30/4 - 1/5 năm 2027
+        "2027-05-03": { name: "Nghỉ bù lễ 30/4 - 1/5", short: "Nghỉ lễ", isOff: true },
+
+        // Nghỉ Quốc khánh 2027
+        "2027-09-03": { name: "Nghỉ lễ Quốc khánh (3/9)", short: "Nghỉ lễ", isOff: true }
+    };
+
+    function formatDateKey(dateObj) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const d = String(dateObj.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
+    function getHolidayForDate(dateObj) {
+        const key = formatDateKey(dateObj);
+        if (Object.prototype.hasOwnProperty.call(SPECIFIC_HOLIDAYS, key)) {
+            return SPECIFIC_HOLIDAYS[key];
+        }
+        const mmdd = key.slice(5);
+        if (Object.prototype.hasOwnProperty.call(FIXED_SOLAR_HOLIDAYS, mmdd)) {
+            return FIXED_SOLAR_HOLIDAYS[mmdd];
+        }
+        return null;
+    }
+
+    // Ghi đè tay cho các ngày đã chốt nghỉ/làm đặc biệt (vd: CN 29/11/2026 nghỉ)
+    const FIXED_USER_DAYS = {
+        "2026-11-29": { status: "OFF", label: "NGHỈ" },
+        "2027-01-01": { status: "OFF", label: "NGHỈ" },
+        "2027-01-02": { status: "OFF", label: "NGHỈ" },
+        "2027-01-07": { status: "OFF", label: "NGHỈ" },
+        "2027-01-08": { status: "OFF", label: "NGHỈ" },
+        "2027-01-09": { status: "OFF", label: "NGHỈ" }
+    };
+
+    const MONTHS_DB = {
+        "2026-10": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["D123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123"],
+            dayHT: ["BD4","D2","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4","BD4"],
+            nightC: ["C123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","A123","A123","C123","C123","C123"],
+            nightHT: ["AC4","C2","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4","AC4"]
+        },
+        "2026-11": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+            dayC: ["D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123"],
+            dayHT: ["B2","B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1"],
+            nightC: ["C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123"],
+            nightHT: ["A2","A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1"]
+        },
+        "2026-12": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123","B123"],
+            dayHT: ["A2","AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B1","B3","BD4","BD4","BD4"],
+            nightC: ["D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123","A123"],
+            nightHT: ["B2","BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A1","A3","AC4","AC4","AC4"]
+        },
+        "2027-01": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123"],
+            dayHT: ["B2","BD4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C2","C3","D1","BD4","BD4","BD4","BD4","D2"],
+            nightC: ["D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123"],
+            nightHT: ["A2","AC4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D2","D3","C1","AC4","AC4","AC4","AC4","C2"]
+        },
+        "2027-02": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
+            dayC: ["B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123"],
+            dayHT: ["D3","D1","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","C2","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C3"],
+            nightC: ["A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123"],
+            nightHT: ["C3","C1","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","D2","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D3"]
+        },
+        "2027-03": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","D123","D123"],
+            dayHT: ["C1","C2","AC4","AC4","AC4","AC4","C1","C2","D3","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D1","D2","BD4","BD4"],
+            nightC: ["B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","C123","C123"],
+            nightHT: ["D1","D2","BD4","BD4","BD4","BD4","D1","D2","C3","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C1","C2","AC4","AC4"]
+        },
+        "2027-04": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+            dayC: ["D123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123"],
+            dayHT: ["BD4","D3","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4"],
+            nightC: ["C123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123"],
+            nightHT: ["AC4","C3","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4"]
+        },
+        "2027-05": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123"],
+            dayHT: ["BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1"],
+            nightC: ["A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123"],
+            nightHT: ["AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1"]
+        },
+        "2027-06": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+            dayC: ["C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123"],
+            dayHT: ["A2","AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B2","B1","AC4","AC4"],
+            nightC: ["D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123"],
+            nightHT: ["B2","BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A2","A1","BD4","BD4"]
+        },
+        "2027-07": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["B123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123"],
+            dayHT: ["AC4","B3","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C1","C2","C3","AC4","AC4","AC4","AC4","C2","C3","D1","BD4","BD4","BD4","BD4"],
+            nightC: ["A123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123"],
+            nightHT: ["BD4","A3","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D1","D2","D3","BD4","BD4","BD4","BD4","D2","D3","C1","AC4","AC4","AC4","AC4"]
+        },
+        "2027-08": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123"],
+            dayHT: ["D2","D3","D1","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","C2","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C3","C1","C2"],
+            nightC: ["A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123"],
+            nightHT: ["C2","C3","C1","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","D2","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D3","D1","D2"]
+        },
+        "2027-09": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+            dayC: ["A123","C123","C123","C123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","B123","B123","B123","B123","D123","D123","D123","A123","A123","D123","D123","D123"],
+            dayHT: ["AC4","AC4","AC4","AC4","C1","C2","D3","BD4","BD4","BD4","BD4","D2","D3","D1","BD4","BD4","BD4","BD4","D3","D1","D2","BD4","BD4","BD4","BD4","D1","D3","BD4","BD4","BD4"],
+            nightC: ["B123","D123","D123","D123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","A123","A123","A123","A123","C123","C123","C123","B123","B123","C123","C123","C123"],
+            nightHT: ["BD4","BD4","BD4","BD4","D1","D2","C3","AC4","AC4","AC4","AC4","C2","C3","C1","AC4","AC4","AC4","AC4","C3","C1","C2","AC4","AC4","AC4","AC4","C1","C3","AC4","AC4","AC4"]
+        },
+        "2027-10": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123"],
+            dayHT: ["D2","BD4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A1","A2","A3","AC4","AC4","AC4","AC4","A2","A3","B1","BD4","BD4","BD4","BD4","B2"],
+            nightC: ["B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123"],
+            nightHT: ["C2","AC4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B1","B2","B3","BD4","BD4","BD4","BD4","B2","B3","A1","AC4","AC4","AC4","AC4","A2"]
+        },
+        "2027-11": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+            dayC: ["D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123"],
+            dayHT: ["B3","B1","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","A2","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A3","A1","A2"],
+            nightC: ["C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123"],
+            nightHT: ["A3","A1","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","B2","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B3","B1","B2"]
+        },
+        "2027-12": {
+            dates: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
+            dayC: ["C123","A123","A123","A123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","D123","D123","D123","D123","B123","B123","B123","C123","C123","B123","B123","B123","C123"],
+            dayHT: ["AC4","AC4","AC4","AC4","A1","A2","B3","BD4","BD4","BD4","BD4","B2","B3","B1","BD4","BD4","BD4","BD4","B3","B1","B2","BD4","BD4","BD4","BD4","B1","B3","AC4","AC4","AC4","B2"],
+            nightC: ["D123","B123","B123","B123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","C123","C123","C123","C123","A123","A123","A123","D123","D123","A123","A123","A123","D123"],
+            nightHT: ["BD4","BD4","BD4","BD4","B1","B2","A3","AC4","AC4","AC4","AC4","A2","A3","A1","AC4","AC4","AC4","AC4","A3","A1","A2","AC4","AC4","AC4","AC4","A1","A3","BD4","BD4","BD4","A2"]
+        }
+    };
+
+    function getRealDowVN(dateObj) {
+        const map = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+        return map[dateObj.getDay()];
+    }
+
+    function getWWLabel(dateObj) {
+        const cur = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+        const use2027Chain = cur >= BASE_SUN_2027;
+        const baseSun = use2027Chain ? BASE_SUN_2027 : BASE_SUN_2026;
+        const baseWW = use2027Chain ? BASE_WW_2027 : BASE_WW_2026;
+
+        const dayOffsetFromSun = cur.getDay();
+        const currentWeekSun = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() - dayOffsetFromSun);
+
+        const diffWeeks = Math.round((currentWeekSun - baseSun) / (7 * 86400000));
+        const wwNum = baseWW + diffWeeks;
+
+        return `${wwNum}.${dayOffsetFromSun}`;
+    }
+
+    function getMyStatusForDate(dateObj, monthData, idx) {
+        const key = formatDateKey(dateObj);
+
+        if (Object.prototype.hasOwnProperty.call(FIXED_USER_DAYS, key)) {
+            return FIXED_USER_DAYS[key];
         }
 
-        function getWWLabel(dateObj) {
-            const cur = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-            const use2027Chain = cur >= BASE_SUN_2027;
-            const baseSun = use2027Chain ? BASE_SUN_2027 : BASE_SUN_2026;
-            const baseWW = use2027Chain ? BASE_WW_2027 : BASE_WW_2026;
-            const dayOffsetFromSun = cur.getDay();
-            const currentWeekSun = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() - dayOffsetFromSun);
-            const diffWeeks = Math.round((currentWeekSun - baseSun) / (7 * 86400000));
-            const wwNum = baseWW + diffWeeks;
-            return `${wwNum}.${dayOffsetFromSun}`;
-        }
+        if (monthData && typeof idx === "number") {
+            const dc = monthData.dayC[idx];
+            const dht = monthData.dayHT[idx];
+            const nc = monthData.nightC[idx];
+            const nht = monthData.nightHT[idx];
 
-        function getMyStatusForDate(dateObj, monthData, idx) {
-            const key = formatDateKey(dateObj);
-            if (Object.prototype.hasOwnProperty.call(FIXED_USER_DAYS, key)) {
-                return FIXED_USER_DAYS[key];
-            }
-            if (monthData && typeof idx === "number") {
-                const dc = monthData.dayC[idx];
-                const dht = monthData.dayHT[idx];
-                const nc = monthData.nightC[idx];
-                const nht = monthData.nightHT[idx];
-                const hasA1Day = dht === "A1";
-                const hasA1Night = nht === "A1";
-                const hasMainDay = dc === "A123";
-                const hasMainNight = nc === "A123";
-                if (hasMainDay && hasMainNight) return { status: "MAIN", label: "LÀM A123 (N+Đ)" };
-                if (hasMainDay) return { status: "MAIN", label: "LÀM A123 (NGÀY)" };
-                if (hasMainNight) return { status: "MAIN", label: "LÀM A123 (ĐÊM)" };
-                if (hasA1Day && hasA1Night) return { status: "SUB", label: "LÀM A1 (N+Đ)" };
-                if (hasA1Day) return { status: "SUB", label: "LÀM A1 (NGÀY)" };
-                if (hasA1Night) return { status: "SUB", label: "LÀM A1 (ĐÊM)" };
-                return { status: "OFF", label: "NGHỈ" };
-            }
+            const hasA1Day = dht === "A1";
+            const hasA1Night = nht === "A1";
+            const hasMainDay = dc === "A123";
+            const hasMainNight = nc === "A123";
+
+            if (hasMainDay && hasMainNight) return { status: "MAIN", label: "LÀM A123 (N+Đ)" };
+            if (hasMainDay) return { status: "MAIN", label: "LÀM A123 (NGÀY)" };
+            if (hasMainNight) return { status: "MAIN", label: "LÀM A123 (ĐÊM)" };
+            if (hasA1Day && hasA1Night) return { status: "SUB", label: "LÀM A1 (N+Đ)" };
+            if (hasA1Day) return { status: "SUB", label: "LÀM A1 (NGÀY)" };
+            if (hasA1Night) return { status: "SUB", label: "LÀM A1 (ĐÊM)" };
             return { status: "OFF", label: "NGHỈ" };
         }
 
-        function getCellClass(code, selectedKip) {
-            let cls = "";
-            if (code.startsWith("AC")) cls = "cell-AC";
-            else if (code.startsWith("BD")) cls = "cell-BD";
-            else if (code.startsWith("A")) cls = "cell-A";
-            else if (code.startsWith("B")) cls = "cell-B";
-            else if (code.startsWith("C")) cls = "cell-C";
-            else if (code.startsWith("D")) cls = "cell-D";
-            if (selectedKip !== "ALL_SHIFTS" && selectedKip !== "MY_A1" && code === selectedKip) {
-                cls += " highlight-selected";
-            }
-            return cls;
+        return { status: "OFF", label: "NGHỈ" };
+    }
+
+    function getCellClass(code, selectedKip) {
+        let cls = "";
+        if (code.startsWith("AC")) cls = "cell-AC";
+        else if (code.startsWith("BD")) cls = "cell-BD";
+        else if (code.startsWith("A")) cls = "cell-A";
+        else if (code.startsWith("B")) cls = "cell-B";
+        else if (code.startsWith("C")) cls = "cell-C";
+        else if (code.startsWith("D")) cls = "cell-D";
+
+        if (selectedKip !== "ALL_SHIFTS" && selectedKip !== "MY_A1" && code === selectedKip) {
+            cls += " highlight-selected";
         }
+        return cls;
+    }
 
-        // QUẢN LÝ LỰA CHỌN CÁ NHÂN (NEW A 💾)
-        function loadPreferences() {
-            const savedMonth = localStorage.getItem("intel_month");
-            const savedYear = localStorage.getItem("intel_year");
-            const savedKip = localStorage.getItem("intel_kip");
+    function renderCalendars() {
+        let m = parseInt(document.getElementById("select-month").value);
+        let y = parseInt(document.getElementById("select-year").value);
+        let selectedKip = document.getElementById("select-kip").value;
+        let wrapper = document.getElementById("calendars-wrapper");
 
-            if (savedMonth) document.getElementById("select-month").value = savedMonth;
-            else document.getElementById("select-month").value = (new Date().getMonth() + 1).toString();
+        let html = "";
+        let offsets = [-1, 0, 1];
 
-            if (savedYear) document.getElementById("select-year").value = savedYear;
-            else document.getElementById("select-year").value = new Date().getFullYear().toString();
+        offsets.forEach(offset => {
+            let targetDate = new Date(y, m - 1 + offset, 1);
+            let targetYear = targetDate.getFullYear();
+            let targetMonth = targetDate.getMonth() + 1;
+            let key = `${targetYear}-${String(targetMonth).padStart(2, '0')}`;
 
-            if (savedKip) document.getElementById("select-kip").value = savedKip;
-        }
-
-        function savePreferences() {
-            localStorage.setItem("intel_month", document.getElementById("select-month").value);
-            localStorage.setItem("intel_year", document.getElementById("select-year").value);
-            localStorage.setItem("intel_kip", document.getElementById("select-kip").value);
-        }
-
-        function handleControlChange() {
-            savePreferences();
-            renderCalendars();
-        }
-
-        // TRA CỨU NHANH CA TRỰC NGÀY BẤT KỲ (NEW B 🔍)
-        function queryDateSchedule() {
-            const dateInput = document.getElementById("search-date").value;
-            const displayEl = document.getElementById("search-result-display");
-            if (!dateInput) return;
-
-            const dateObj = new Date(dateInput);
-            const y = dateObj.getFullYear();
-            const m = dateObj.getMonth() + 1;
-            const d = dateObj.getDate();
-            const key = `${y}-${String(m).padStart(2, '0')}`;
-            const db = MONTHS_DB[key];
-
-            if (!db) {
-                displayEl.innerHTML = `<span style="color: #d9534f;">⚠️ Chỉ hỗ trợ dữ liệu từ tháng 10/2026 đến hết năm 2027.</span>`;
-                return;
-            }
-
-            const idx = db.dates.indexOf(d);
-            if (idx === -1) {
-                displayEl.innerHTML = `<span style="color: #d9534f;">❌ Lỗi tính toán ngày trực.</span>`;
-                return;
-            }
-
-            const ww = getWWLabel(dateObj);
-            const dow = getRealDowVN(dateObj);
-            const holiday = getHolidayForDate(dateObj);
-
-            // Lấy kíp hoạt động ngày hôm đó
-            const dc = db.dayC[idx];
-            const dht = db.dayHT[idx];
-            const nc = db.nightC[idx];
-            const nht = db.nightHT[idx];
-
-            // Lấy kíp riêng của User (A1)
-            const mySt = getMyStatusForDate(dateObj, db, idx);
-            let userBadge = "";
-            if (mySt.status === "MAIN" || mySt.status === "SUB") {
-                userBadge = `<span class="search-badge st-main" style="background:#1d4ed8; padding:3px 8px; border-radius:4px;">Đi làm: ${mySt.label}</span>`;
-            } else {
-                userBadge = `<span class="search-badge st-off" style="background:#15803d; padding:3px 8px; border-radius:4px;">Nghỉ</span>`;
-            }
-
-            let holidayText = holiday ? `<span style="color:var(--holiday-text); margin-left: 10px;">🎉 Lễ: ${holiday.name}</span>` : "";
-
-            displayEl.innerHTML = `
-                <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-                        <span>📅 Ngày ${d}/${m}/${y} (${dow}) • <b style="color: var(--intel-blue);">WW ${ww}</b>${holidayText}</span>
-                        ${userBadge}
-                    </div>
-                    <div style="font-size: 13px; font-weight: normal; color: #555; border-top: 1px solid #eee; padding-top: 6px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                        <div>☀️ <b>Ca Ngày:</b> Kíp ${dc} | Sub ${dht}</div>
-                        <div>🌙 <b>Ca Đêm:</b> Kíp ${nc} | Sub ${nht}</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderCalendars() {
-            let m = parseInt(document.getElementById("select-month").value);
-            let y = parseInt(document.getElementById("select-year").value);
-            let selectedKip = document.getElementById("select-kip").value;
-            let wrapper = document.getElementById("calendars-wrapper");
-            let html = "";
-            let offsets = [-1, 0, 1];
-            offsets.forEach(offset => {
-                let targetDate = new Date(y, m - 1 + offset, 1);
-                let targetYear = targetDate.getFullYear();
-                let targetMonth = targetDate.getMonth() + 1;
-                let key = `${targetYear}-${String(targetMonth).padStart(2, '0')}`;
-                if (MONTHS_DB[key]) {
-                    let data = MONTHS_DB[key];
-                    let n = data.dates.length;
-                    let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    html += `<div class="table-container"><table>`;
-                    html += `<tr class="ww-row"><th class="row-header">${monthNames[targetMonth-1]} (${targetYear})</th>`;
-                    for (let i = 0; i < n; i++) {
-                        let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
-                        html += `<td>${getWWLabel(dt)}</td>`;
-                    }
-                    html += `</tr>`;
-                    html += `<tr class="dow-row"><th class="row-header">THU</th>`;
-                    for (let i = 0; i < n; i++) {
-                        let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
-                        let dowVN = getRealDowVN(dt);
-                        let dCls = dowVN === "CN" ? "sun" : "";
-                        html += `<td class="${dCls}">${dowVN}</td>`;
-                    }
-                    html += `</tr>`;
-                    html += `<tr class="date-row"><th class="row-header"> NGÀY </th>`;
-                    for (let i = 0; i < n; i++) html += `<td>${String(data.dates[i]).padStart(2, '0')}</td>`;
-                    html += `</tr>`;
-                    html += `<tr class="holiday-row"><th class="row-header">LỄ / TẾT</th>`;
-                    for (let i = 0; i < n; i++) {
-                        let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
-                        let hol = getHolidayForDate(dt);
-                        if (hol) {
-                            html += `<td class="holiday-cell" title="${hol.name}">${hol.short}</td>`;
-                        } else {
-                            html += `<td></td>`;
-                        }
-                    }
-                    html += `</tr>`;
-                    html += `<tr><th class="row-header">LỊCH BẠN (A1)</th>`;
-                    for (let i = 0; i < n; i++) {
-                        let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
-                        let st = getMyStatusForDate(dt, data, i);
-                        let stCls = st.status === "MAIN" ? "st-main" : (st.status === "SUB" ? "st-sub" : "st-off");
-                        html += `<td class="${stCls}">${st.label}</td>`;
-                    }
-                    html += `</tr>`;
-                    const rows = [
-                        { label: "CA NGÀY( Main )", arr: data.dayC },
-                        { label: "CA NGÀY( Sub )", arr: data.dayHT },
-                        { label: "CA ĐÊM ( Main )", arr: data.nightC },
-                        { label: "CA ĐÊM ( Sub )", arr: data.nightHT }
-                    ];
-                    rows.forEach(r => {
-                        html += `<tr><th class="row-header">${r.label}</th>`;
-                        for (let i = 0; i < n; i++) {
-                            let code = r.arr[i];
-                            html += `<td class="${getCellClass(code, selectedKip)}">${code}</td>`;
-                        }
-                        html += `</tr>`;
-                    });
-                    html += `</table></div>`;
-                }
-            });
-            wrapper.innerHTML = html;
-        }
-
-        // KHỞI TẠO BÁO THỨC TỰ ĐỘNG KHI ĐỒNG BỘ .ICS (NEW C ⏰)
-        function exportToICS() {
-            let selectedKip = document.getElementById("select-kip").value;
-            if (selectedKip === "ALL_SHIFTS") {
-                alert("Vui lòng chọn Lịch của tôi (A1 + A123) hoặc một Kíp cụ thể để xuất lịch iPhone!");
-                return;
-            }
-            let ics = [
-                "BEGIN:VCALENDAR",
-                "VERSION:2.0",
-                "PRODID:-//Intel Shift Calendar Fixed//VN",
-                "CALSCALE:GREGORIAN",
-                "METHOD:PUBLISH"
-            ];
-            for (let key in MONTHS_DB) {
-                let [yStr, mStr] = key.split("-");
+            if (MONTHS_DB[key]) {
                 let data = MONTHS_DB[key];
                 let n = data.dates.length;
+                let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                html += `<div class="table-container"><table>`;
+
+                html += `<tr class="ww-row"><th class="row-header">${monthNames[targetMonth-1]} (${targetYear})</th>`;
                 for (let i = 0; i < n; i++) {
-                    let d = data.dates[i];
-                    let dt = new Date(parseInt(yStr), parseInt(mStr) - 1, d);
-                    let dateStr = `${yStr}${mStr}${String(d).padStart(2,'0')}`;
-                    let nextDateObj = new Date(parseInt(yStr), parseInt(mStr) - 1, d + 1);
-                    let nextDateStr = `${nextDateObj.getFullYear()}${String(nextDateObj.getMonth()+1).padStart(2,'0')}${String(nextDateObj.getDate()).padStart(2,'0')}`;
-                    let wwStr = getWWLabel(dt);
+                    let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
+                    html += `<td>${getWWLabel(dt)}</td>`;
+                }
+                html += `</tr>`;
+
+                html += `<tr class="dow-row"><th class="row-header">THỨ</th>`;
+                for (let i = 0; i < n; i++) {
+                    let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
+                    let dowVN = getRealDowVN(dt);
+                    let dCls = dowVN === "CN" ? "sun" : "";
+                    html += `<td class="${dCls}">${dowVN}</td>`;
+                }
+                html += `</tr>`;
+
+                html += `<tr class="date-row"><th class="row-header"> NGÀY </th>`;
+                for (let i = 0; i < n; i++) html += `<td>${String(data.dates[i]).padStart(2, '0')}</td>`;
+                html += `</tr>`;
+
+                html += `<tr class="holiday-row"><th class="row-header">LỄ / TẾT</th>`;
+                for (let i = 0; i < n; i++) {
+                    let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
                     let hol = getHolidayForDate(dt);
                     if (hol) {
-                        ics.push(
-                            "BEGIN:VEVENT",
-                            `DTSTART;VALUE=DATE:${dateStr}`,
-                            `DTEND;VALUE=DATE:${nextDateStr}`,
-                            `SUMMARY:🎉 ${hol.name}`,
-                            `DESCRIPTION:Lễ/Tết (WW ${wwStr})`,
-                            "END:VEVENT"
-                        );
-                    }
-                    if (selectedKip === "MY_A1") {
-                        let mySt = getMyStatusForDate(dt, data, i);
-                        if (mySt.status === "MAIN" || mySt.status === "SUB") {
-                            const hasDay = mySt.label.includes("NGÀY") || mySt.label.includes("N+Đ");
-                            const hasNight = mySt.label.includes("ĐÊM") || mySt.label.includes("N+Đ");
-                            if (hasDay) {
-                                ics.push(
-                                    "BEGIN:VEVENT",
-                                    `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T070000`,
-                                    `DTEND;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
-                                    `SUMMARY:☀️ Đi làm (${mySt.label})`,
-                                    `DESCRIPTION:WW ${wwStr} | ${mySt.label}`,
-                                    // TÍNH NĂNG BÁO THỨC CA SÁNG (Trước 90 phút - 05:30)
-                                    "BEGIN:VALARM",
-                                    "TRIGGER:-PT1H30M",
-                                    "ACTION:DISPLAY",
-                                    "DESCRIPTION:⏰ ĐẬY ĐI LÀM CA SÁNG ANH EM ƠI!",
-                                    "END:VALARM",
-                                    "END:VEVENT"
-                                );
-                            }
-                            if (hasNight) {
-                                ics.push(
-                                    "BEGIN:VEVENT",
-                                    `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
-                                    `DTEND;TZID=Asia/Ho_Chi_Minh:${nextDateStr}T070000`,
-                                    `SUMMARY:🌙 Đi làm (${mySt.label})`,
-                                    `DESCRIPTION:WW ${wwStr} | ${mySt.label}`,
-                                    // TÍNH NĂNG BÁO THỨC CA ĐÊM (Trước 90 phút - 17:30)
-                                    "BEGIN:VALARM",
-                                    "TRIGGER:-PT1H30M",
-                                    "ACTION:DISPLAY",
-                                    "DESCRIPTION:⏰ ĐẬY SỬA SOẠN ĐI LÀM CA ĐÊM!",
-                                    "END:VALARM",
-                                    "END:VEVENT"
-                                );
-                            }
-                        }
+                        html += `<td class="holiday-cell" title="${hol.name}">${hol.short}</td>`;
                     } else {
-                        let dc = data.dayC[i], dht = data.dayHT[i], nc = data.nightC[i], nht = data.nightHT[i];
-                        if (dc === selectedKip || dht === selectedKip) {
+                        html += `<td></td>`;
+                    }
+                }
+                html += `</tr>`;
+
+                html += `<tr><th class="row-header">LỊCH BẠN (A1)</th>`;
+                for (let i = 0; i < n; i++) {
+                    let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
+                    let st = getMyStatusForDate(dt, data, i);
+                    let stCls = st.status === "MAIN" ? "st-main" : (st.status === "SUB" ? "st-sub" : "st-off");
+                    html += `<td class="${stCls}">${st.label}</td>`;
+                }
+                html += `</tr>`;
+
+                const rows = [
+                    { label: "CA NGÀY( Main )", arr: data.dayC },
+                    { label: "CA NGÀY( Sub  )", arr: data.dayHT },
+                    { label: "CA ĐÊM ( Main )", arr: data.nightC },
+                    { label: "CA ĐÊM ( Sub  )", arr: data.nightHT }
+                ];
+
+                rows.forEach(r => {
+                    html += `<tr><th class="row-header">${r.label}</th>`;
+                    for (let i = 0; i < n; i++) {
+                        let code = r.arr[i];
+                        html += `<td class="${getCellClass(code, selectedKip)}">${code}</td>`;
+                    }
+                    html += `</tr>`;
+                });
+
+                html += `</table></div>`;
+            }
+        });
+
+        wrapper.innerHTML = html;
+    }
+
+    function exportToICS() {
+        let selectedKip = document.getElementById("select-kip").value;
+        if (selectedKip === "ALL_SHIFTS") {
+            alert("Vui lòng chọn Lịch của tôi (A1 + A123) hoặc một Kíp cụ thể để xuất lịch iPhone!");
+            return;
+        }
+
+        let ics = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Intel Shift Calendar Fixed//VN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH"
+        ];
+
+        for (let key in MONTHS_DB) {
+            let [yStr, mStr] = key.split("-");
+            let data = MONTHS_DB[key];
+            let n = data.dates.length;
+
+            for (let i = 0; i < n; i++) {
+                let d = data.dates[i];
+                let dt = new Date(parseInt(yStr), parseInt(mStr) - 1, d);
+                let dateStr = `${yStr}${mStr}${String(d).padStart(2,'0')}`;
+                let nextDateObj = new Date(parseInt(yStr), parseInt(mStr) - 1, d + 1);
+                let nextDateStr = `${nextDateObj.getFullYear()}${String(nextDateObj.getMonth()+1).padStart(2,'0')}${String(nextDateObj.getDate()).padStart(2,'0')}`;
+                let wwStr = getWWLabel(dt);
+
+                let hol = getHolidayForDate(dt);
+                if (hol) {
+                    ics.push(
+                        "BEGIN:VEVENT",
+                        `DTSTART;VALUE=DATE:${dateStr}`,
+                        `DTEND;VALUE=DATE:${nextDateStr}`,
+                        `SUMMARY:🎉 ${hol.name}`,
+                        `DESCRIPTION:Lễ/Tết (WW ${wwStr})`,
+                        "END:VEVENT"
+                    );
+                }
+
+                if (selectedKip === "MY_A1") {
+                    let mySt = getMyStatusForDate(dt, data, i);
+                    if (mySt.status === "MAIN" || mySt.status === "SUB") {
+                        const hasDay = mySt.label.includes("NGÀY") || mySt.label.includes("N+Đ");
+                        const hasNight = mySt.label.includes("ĐÊM") || mySt.label.includes("N+Đ");
+
+                        if (hasDay) {
                             ics.push(
                                 "BEGIN:VEVENT",
                                 `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T070000`,
                                 `DTEND;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
-                                `SUMMARY:☀️ Ca Ngày (${dc} - ${dht})`,
-                                `DESCRIPTION:Ca Ngày: ${dc} | H.T: ${dht} (WW ${wwStr})`,
-                                "BEGIN:VALARM",
-                                "TRIGGER:-PT1H30M",
-                                "ACTION:DISPLAY",
-                                "DESCRIPTION:⏰ Chuẩn bị đi làm Ca Sáng (Kíp " + dc + ")",
-                                "END:VALARM",
+                                `SUMMARY:☀️ Đi làm (${mySt.label})`,
+                                `DESCRIPTION:WW ${wwStr} | ${mySt.label}`,
                                 "END:VEVENT"
                             );
                         }
-                        if (nc === selectedKip || nht === selectedKip) {
+
+                        if (hasNight) {
                             ics.push(
                                 "BEGIN:VEVENT",
                                 `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
                                 `DTEND;TZID=Asia/Ho_Chi_Minh:${nextDateStr}T070000`,
-                                `SUMMARY:🌙 Ca Đêm (${nc} - ${nht})`,
-                                `DESCRIPTION:Ca Đêm: ${nc} | H.T: ${nht} (WW ${wwStr})`,
-                                "BEGIN:VALARM",
-                                "TRIGGER:-PT1H30M",
-                                "ACTION:DISPLAY",
-                                "DESCRIPTION:⏰ Chuẩn bị đi làm Ca Đêm (Kíp " + nc + ")",
-                                "END:VALARM",
+                                `SUMMARY:🌙 Đi làm (${mySt.label})`,
+                                `DESCRIPTION:WW ${wwStr} | ${mySt.label}`,
                                 "END:VEVENT"
                             );
                         }
                     }
+                } else {
+                    let dc = data.dayC[i], dht = data.dayHT[i], nc = data.nightC[i], nht = data.nightHT[i];
+                    if (dc === selectedKip || dht === selectedKip) {
+                        ics.push(
+                            "BEGIN:VEVENT",
+                            `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T070000`,
+                            `DTEND;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
+                            `SUMMARY:☀️ Ca Ngày (${dc} - ${dht})`,
+                            `DESCRIPTION:Ca Ngày: ${dc} | H.T: ${dht} (WW ${wwStr})`,
+                            "END:VEVENT"
+                        );
+                    }
+                    if (nc === selectedKip || nht === selectedKip) {
+                        ics.push(
+                            "BEGIN:VEVENT",
+                            `DTSTART;TZID=Asia/Ho_Chi_Minh:${dateStr}T190000`,
+                            `DTEND;TZID=Asia/Ho_Chi_Minh:${nextDateStr}T070000`,
+                            `SUMMARY:🌙 Ca Đêm (${nc} - ${nht})`,
+                            `DESCRIPTION:Ca Đêm: ${nc} | H.T: ${nht} (WW ${wwStr})`,
+                            "END:VEVENT"
+                        );
+                    }
                 }
             }
-            ics.push("END:VCALENDAR");
-            let blob = new Blob([ics.join("\r\n")], { type: "text/calendar;charset=utf-8" });
-            let link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `Lich_Ca_Intel_${selectedKip}_2026_2027.ics`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
 
-        const getIntelWW = (d = new Date()) => {
-            const start = new Date(d.getFullYear(), 0, 1);
-            const diff = Math.floor((d - start) / 86400000) + start.getDay();
-            const ww = Math.ceil(diff / 7);
-            const dayNum = d.getDay() === 0 ? 7 : d.getDay();
-            return `WW${ww}.${dayNum}`;
+        ics.push("END:VCALENDAR");
+
+        let blob = new Blob([ics.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `Lich_Ca_Intel_${selectedKip}_2026_2027.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    const getIntelWW = (d = new Date()) => {
+        const start = new Date(d.getFullYear(), 0, 1);
+        const diff = Math.floor((d - start) / 86400000) + start.getDay();
+        const ww = Math.ceil(diff / 7);
+        const dayNum = d.getDay() === 0 ? 7 : d.getDay();
+        return `WW${ww}.${dayNum}`;
+    };
+
+    async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HCM") {
+        const tempEl = document.getElementById("weather-temp");
+        const descEl = document.getElementById("weather-desc");
+        const locEl = document.getElementById("weather-loc");
+        if (!tempEl || !descEl) return;
+        if (locEl) locEl.textContent = label;
+
+        const weatherText = {
+            0: "Quang đãng",
+            1: "Ít mây",
+            2: "Có mây",
+            3: "Nhiều mây",
+            45: "Sương mù",
+            48: "Sương mù",
+            51: "Mưa phùn nhẹ",
+            53: "Mưa phùn",
+            55: "Mưa phùn dày",
+            61: "Mưa nhẹ",
+            63: "Mưa vừa",
+            65: "Mưa to",
+            80: "Mưa rào nhẹ",
+            81: "Mưa rào",
+            82: "Mưa rào lớn",
+            95: "Có dông"
         };
 
-        async function loadRealtimeWeather(lat = 10.8231, lon = 106.6297, label = "TP.HCM") {
-            const tempEl = document.getElementById("weather-temp");
-            const descEl = document.getElementById("weather-desc");
-            const locEl = document.getElementById("weather-loc");
-            if (!tempEl || !descEl) return;
-            if (locEl) locEl.textContent = label;
-            const weatherText = {
-                0: "Quang đãng", 1: "Ít mây", 2: "Có mây", 3: "Nhiều mây",
-                45: "Sương mù", 48: "Sương mù", 51: "Mưa phùn nhẹ", 53: "Mưa phùn",
-                55: "Mưa phùn dày", 61: "Mưa nhẹ", 63: "Mưa vừa", 65: "Mưa to",
-                80: "Mưa rào nhẹ", 81: "Mưa rào", 82: "Mưa rào lớn", 95: "Có dông"
-            };
+        try {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FBangkok`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Weather fetch failed");
+            const data = await res.json();
+            const current = data.current || {};
+            const temp = Math.round(current.temperature_2m);
+            const code = current.weather_code;
+
+            tempEl.textContent = Number.isFinite(temp) ? `${temp}°C` : "--°C";
+            descEl.textContent = weatherText[code] || `Mã ${code}`;
+        } catch (err) {
+            descEl.textContent = "Mất kết nối";
+        }
+    }
+
+    async function loadIntelStock() {
+        const priceEl = document.getElementById("stock-price");
+        const changeEl = document.getElementById("stock-change");
+        if (!priceEl || !changeEl) return;
+
+        const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m";
+        const urls = [
+            yahooUrl,
+            "https://corsproxy.io/?" + encodeURIComponent(yahooUrl),
+            "https://api.allorigins.win/raw?url=" + encodeURIComponent(yahooUrl)
+        ];
+
+        for (const url of urls) {
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=Asia%2FBangkok`;
                 const res = await fetch(url);
-                if (!res.ok) throw new Error("Weather fetch failed");
+                if (!res.ok) continue;
                 const data = await res.json();
-                const current = data.current || {};
-                const temp = Math.round(current.temperature_2m);
-                const code = current.weather_code;
-                tempEl.textContent = Number.isFinite(temp) ? `${temp}°C` : "--°C";
-                descEl.textContent = weatherText[code] || `Mã ${code}`;
-            } catch (err) {
-                descEl.textContent = "Mất kết nối";
-            }
+                const meta = data?.chart?.result?.[0]?.meta;
+                if (!meta) continue;
+
+                const price = Number(meta.regularMarketPrice);
+                const prevClose = Number(meta.previousClose ?? meta.chartPreviousClose);
+                if (!Number.isFinite(price) || price <= 0) continue;
+
+                priceEl.textContent = `$${price.toFixed(2)}`;
+
+                if (Number.isFinite(prevClose) && prevClose > 0) {
+                    const diff = price - prevClose;
+                    const pct = (diff / prevClose) * 100;
+                    const sign = diff >= 0 ? "+" : "";
+                    changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
+                    changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
+                } else {
+                    changeEl.textContent = "Cập nhật";
+                }
+                return;
+            } catch (e) {}
         }
 
-        async function loadIntelStock() {
-            const priceEl = document.getElementById("stock-price");
-            const changeEl = document.getElementById("stock-change");
-            if (!priceEl || !changeEl) return;
-            const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/INTC?range=1d&interval=5m";
-            const urls = [
-                yahooUrl,
-                "https://corsproxy.io/?" + encodeURIComponent(yahooUrl),
-                "https://api.allorigins.win/raw?url=" + encodeURIComponent(yahooUrl)
-            ];
-            for (const url of urls) {
-                try {
-                    const res = await fetch(url);
-                    if (!res.ok) continue;
-                    const data = await res.json();
-                    const meta = data?.chart?.result?.[0]?.meta;
-                    if (!meta) continue;
-                    const price = Number(meta.regularMarketPrice);
-                    const prevClose = Number(meta.previousClose ?? meta.chartPreviousClose);
-                    if (!Number.isFinite(price) || price <= 0) continue;
-                    priceEl.textContent = `$${price.toFixed(2)}`;
-                    if (Number.isFinite(prevClose) && prevClose > 0) {
-                        const diff = price - prevClose;
-                        const pct = (diff / prevClose) * 100;
-                        const sign = diff >= 0 ? "+" : "";
-                        changeEl.textContent = `${sign}${diff.toFixed(2)} (${sign}${pct.toFixed(2)}%)`;
-                        changeEl.style.color = diff >= 0 ? "#86efac" : "#fca5a5";
-                    } else {
-                        changeEl.textContent = "Cập nhật";
-                    }
-                    return;
-                } catch (e) {}
-            }
-            changeEl.textContent = "Chưa lấy được";
-        }
+        changeEl.textContent = "Chưa lấy được";
+    }
 
-        function tickLiveClockAndPeriod() {
-            const clockEl = document.getElementById("live-clock");
-            const periodEl = document.getElementById("day-night-badge");
-            if (!clockEl || !periodEl) return;
-            const d = new Date();
-            const hh = String(d.getHours()).padStart(2, "0");
-            const mm = String(d.getMinutes()).padStart(2, "0");
-            const ss = String(d.getSeconds()).padStart(2, "0");
-            clockEl.textContent = "🕒 " + hh + ":" + mm + ":" + ss;
-            const mins = d.getHours() * 60 + d.getMinutes();
-            const isDay = mins >= 6 * 60 && mins < 18 * 60;
-            periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
-            periodEl.style.background = isDay ? "rgba(250, 204, 21, 0.25)" : "rgba(99, 102, 241, 0.35)";
-        }
+    const todayObj = new Date();
+    document.getElementById("today-info").innerHTML = `Hôm nay: <b>${todayObj.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(todayObj)}</b>`;
+    renderCalendars();
+    loadRealtimeWeather();
+    loadIntelStock();
 
-        function formatDateKey(dateObj) {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, "0");
-            const d = String(dateObj.getDate()).padStart(2, "0");
-            return `${y}-${m}-${d}`;
-        }
+    function tickLiveClockAndPeriod() {
+        const clockEl = document.getElementById("live-clock");
+        const periodEl = document.getElementById("day-night-badge");
+        if (!clockEl || !periodEl) return;
 
-        // KHỞI CHẠY TRANG
-        const todayObj = new Date();
-        document.getElementById("today-info").innerHTML = `Hôm nay: <b>${todayObj.toLocaleDateString("vi-VN")}</b> • <b>${getIntelWW(todayObj)}</b>`;
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
 
-        loadPreferences(); // Nạp cấu hình đã lưu
-        renderCalendars();
-        loadRealtimeWeather();
-        loadIntelStock();
+        clockEl.textContent = "🕒 " + hh + ":" + mm + ":" + ss;
 
-        // Gán ngày tra cứu mặc định là hôm nay
-        document.getElementById("search-date").value = todayObj.toISOString().split('T')[0];
-        queryDateSchedule();
+        const mins = d.getHours() * 60 + d.getMinutes();
+        const isDay = mins >= 6 * 60 && mins < 18 * 60;
+        periodEl.textContent = isDay ? "☀️ Ca Ngày" : "🌙 Ca Đêm";
+        periodEl.style.background = isDay
+            ? "rgba(250, 204, 21, 0.25)"
+            : "rgba(99, 102, 241, 0.35)";
+    }
 
-        tickLiveClockAndPeriod();
-        if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
-        window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
-    </script>
+    tickLiveClockAndPeriod();
+    if (window.__liveShiftTimer) clearInterval(window.__liveShiftTimer);
+    window.__liveShiftTimer = setInterval(tickLiveClockAndPeriod, 1000);
+</script>
 </body>
 </html>
