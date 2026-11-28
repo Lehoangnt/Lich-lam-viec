@@ -6,24 +6,26 @@
     <title>Lịch Ca Làm Việc Intel </title>
     <style>
         :root {
-            --intel-blue: #0071c5;       /* Xanh đen than đậm — sắc nét, chuyên nghiệp */
-            --intel-dark: #004a86;       /* Đen xanh sâu cho thanh tiêu đề/header */
+            --intel-blue: #0071c5;
+            --intel-dark: #004a86;
 
-            /* 4 kíp phụ: giữ màu đặc trưng nhưng gọn gàng, không lấn át */
-            --kip-a: #e6f4ea;            /* Xanh lá sáng rõ */
-            --kip-b: #fef7e0;            /* Vàng sáng rõ */
-            --kip-c: #fce8e6;            /* Đỏ hồng sáng rõ */
-            --kip-d: #e8f0fe;            /* Xanh dương sáng rõ */
+            --kip-a: #e6f4ea;
+            --kip-b: #fef7e0;
+            --kip-c: #fce8e6;
+            --kip-d: #e8f0fe;
 
-            /* Lịch làm việc chính: nổi bật nhất để nhìn phát thấy ngay */
-            --work-main: #1d4ed8;        /* Xanh coban đậm */
-            --work-main-text: #ffffff;   /* Chữ trắng tương phản tối đa */
+            --work-main: #1d4ed8;
+            --work-main-text: #ffffff;
 
-            --work-sub: #d97706;         /* Cam hổ phách đậm cho ca chuyển/phụ */
-            --work-sub-text: #ffffff;    /* Chữ trắng sắc nét */
+            --work-sub: #d97706;
+            --work-sub-text: #ffffff;
 
-            --work-off: #15803d;         /* Xanh lá đậm cho ngày nghỉ */
-            --work-off-text: #ffffff;    /* Chữ trắng rõ ràng */
+            --work-off: #15803d;
+            --work-off-text: #ffffff;
+
+            --holiday-bg: #fff1f2;
+            --holiday-text: #be123c;
+            --holiday-border: #fda4af;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -131,6 +133,18 @@
         .sun { color: #d9534f; }
         .date-row { font-weight: bold; font-size: 14px; background-color: #fff; }
 
+        .holiday-row td {
+            background-color: #fffafa;
+            font-size: 11px;
+            line-height: 1.25;
+        }
+        .holiday-cell {
+            background-color: var(--holiday-bg) !important;
+            color: var(--holiday-text) !important;
+            font-weight: 700;
+            border-bottom: 2px solid var(--holiday-border);
+        }
+
         .cell-A { background-color: var(--kip-a); font-weight: bold; }
         .cell-B { background-color: var(--kip-b); font-weight: bold; }
         .cell-C { background-color: var(--kip-c); font-weight: bold; }
@@ -232,6 +246,61 @@
 
     const BASE_SUN_2027 = new Date(2026, 11, 27); // 27/12/2026 (CN) = 1.0
     const BASE_WW_2027 = 1;
+
+    // Lễ cố định theo MM-DD (Tết Tây, lễ/tết VN theo quy định + Giáng sinh)
+    const FIXED_SOLAR_HOLIDAYS = {
+        "01-01": { name: "Tết Dương lịch", short: "Tết Tây", isOff: true },
+        "04-30": { name: "Ngày Giải phóng miền Nam (30/4)", short: "30/4", isOff: true },
+        "05-01": { name: "Ngày Quốc tế Lao động (1/5)", short: "1/5", isOff: true },
+        "07-27": { name: "Ngày Thương binh - Liệt sĩ (27/7)", short: "27/7", isOff: true },
+        "09-02": { name: "Ngày Quốc khánh (2/9)", short: "Quốc khánh", isOff: true },
+        "11-24": { name: "Ngày Văn hóa Việt Nam (24/11)", short: "VH VN", isOff: true },
+        "12-25": { name: "Giáng sinh", short: "Giáng sinh", isOff: false }
+    };
+
+    // Lễ theo ngày cụ thể YYYY-MM-DD (Tết Nguyên Đán, Giỗ Tổ Hùng Vương, nghỉ lễ/nghỉ bù)
+    const SPECIFIC_HOLIDAYS = {
+        // Tết Dương lịch & nghỉ cuối tuần liền kề 2027
+        "2027-01-02": { name: "Nghỉ Tết Dương lịch (2/1)", short: "Nghỉ Tết", isOff: true },
+        "2027-01-03": { name: "Nghỉ Tết Dương lịch (3/1)", short: "Nghỉ Tết", isOff: true },
+
+        // Tết Nguyên Đán Đinh Mùi 2027 (28 Chạp Bính Ngọ -> Mùng 5 Đinh Mùi: 04/02 - 10/02/2027)
+        "2027-02-04": { name: "28 Tết (Nghỉ Tết Nguyên đán)", short: "28 Tết", isOff: true },
+        "2027-02-05": { name: "29 Tết / Giao thừa", short: "29 Tết", isOff: true },
+        "2027-02-06": { name: "Mùng 1 Tết Đinh Mùi", short: "Mùng 1", isOff: true },
+        "2027-02-07": { name: "Mùng 2 Tết Đinh Mùi", short: "Mùng 2", isOff: true },
+        "2027-02-08": { name: "Mùng 3 Tết Đinh Mùi", short: "Mùng 3", isOff: true },
+        "2027-02-09": { name: "Mùng 4 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 4", isOff: true },
+        "2027-02-10": { name: "Mùng 5 Tết (Nghỉ Tết Nguyên đán)", short: "Mùng 5", isOff: true },
+
+        // Giỗ Tổ Hùng Vương 2027 (10/3 Âm lịch = 16/04/2027)
+        "2027-04-16": { name: "Giỗ Tổ Hùng Vương (10/3 ÂL)", short: "Giỗ Tổ", isOff: true },
+
+        // Nghỉ lễ 30/4 - 1/5 năm 2027
+        "2027-05-03": { name: "Nghỉ bù lễ 30/4 - 1/5", short: "Nghỉ lễ", isOff: true },
+
+        // Nghỉ Quốc khánh 2027
+        "2027-09-03": { name: "Nghỉ lễ Quốc khánh (3/9)", short: "Nghỉ lễ", isOff: true }
+    };
+
+    function formatDateKey(dateObj) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const d = String(dateObj.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+    }
+
+    function getHolidayForDate(dateObj) {
+        const key = formatDateKey(dateObj);
+        if (Object.prototype.hasOwnProperty.call(SPECIFIC_HOLIDAYS, key)) {
+            return SPECIFIC_HOLIDAYS[key];
+        }
+        const mmdd = key.slice(5);
+        if (Object.prototype.hasOwnProperty.call(FIXED_SOLAR_HOLIDAYS, mmdd)) {
+            return FIXED_SOLAR_HOLIDAYS[mmdd];
+        }
+        return null;
+    }
 
     // Ghi đè tay cho các ngày đã chốt nghỉ/làm đặc biệt (vd: CN 29/11/2026 nghỉ)
     const FIXED_USER_DAYS = {
@@ -362,7 +431,7 @@
         const baseSun = use2027Chain ? BASE_SUN_2027 : BASE_SUN_2026;
         const baseWW = use2027Chain ? BASE_WW_2027 : BASE_WW_2026;
 
-        const dayOffsetFromSun = cur.getDay(); // 0=CN, 1=T2..6=T7
+        const dayOffsetFromSun = cur.getDay();
         const currentWeekSun = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() - dayOffsetFromSun);
 
         const diffWeeks = Math.round((currentWeekSun - baseSun) / (7 * 86400000));
@@ -372,10 +441,7 @@
     }
 
     function getMyStatusForDate(dateObj, monthData, idx) {
-        const y = dateObj.getFullYear();
-        const m = String(dateObj.getMonth() + 1).padStart(2, "0");
-        const d = String(dateObj.getDate()).padStart(2, "0");
-        const key = `${y}-${m}-${d}`;
+        const key = formatDateKey(dateObj);
 
         if (Object.prototype.hasOwnProperty.call(FIXED_USER_DAYS, key)) {
             return FIXED_USER_DAYS[key];
@@ -461,6 +527,18 @@
                 for (let i = 0; i < n; i++) html += `<td>${String(data.dates[i]).padStart(2, '0')}</td>`;
                 html += `</tr>`;
 
+                html += `<tr class="holiday-row"><th class="row-header">LỄ / TẾT</th>`;
+                for (let i = 0; i < n; i++) {
+                    let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
+                    let hol = getHolidayForDate(dt);
+                    if (hol) {
+                        html += `<td class="holiday-cell" title="${hol.name}">${hol.short}</td>`;
+                    } else {
+                        html += `<td></td>`;
+                    }
+                }
+                html += `</tr>`;
+
                 html += `<tr><th class="row-header">LỊCH BẠN (A1)</th>`;
                 for (let i = 0; i < n; i++) {
                     let dt = new Date(targetYear, targetMonth - 1, data.dates[i]);
@@ -520,6 +598,18 @@
                 let nextDateObj = new Date(parseInt(yStr), parseInt(mStr) - 1, d + 1);
                 let nextDateStr = `${nextDateObj.getFullYear()}${String(nextDateObj.getMonth()+1).padStart(2,'0')}${String(nextDateObj.getDate()).padStart(2,'0')}`;
                 let wwStr = getWWLabel(dt);
+
+                let hol = getHolidayForDate(dt);
+                if (hol) {
+                    ics.push(
+                        "BEGIN:VEVENT",
+                        `DTSTART;VALUE=DATE:${dateStr}`,
+                        `DTEND;VALUE=DATE:${nextDateStr}`,
+                        `SUMMARY:🎉 ${hol.name}`,
+                        `DESCRIPTION:Lễ/Tết (WW ${wwStr})`,
+                        "END:VEVENT"
+                    );
+                }
 
                 if (selectedKip === "MY_A1") {
                     let mySt = getMyStatusForDate(dt, data, i);
